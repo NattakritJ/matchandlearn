@@ -38,7 +38,7 @@ def signup(request):
             user.profile.college = form.cleaned_data.get('college')
             user.profile.age = form.cleaned_data.get('age')
             user.profile.gender = form.cleaned_data.get('gender')
-            newuser = UserInfo.objects.create(name=user.username, school=user.profile.college,school_common_name=stringforschool(user.profile.college), age=user.profile.age, firstname=user.profile.first_name,lastname=user.profile.last_name,gender =user.profile.gender)
+            newuser = UserInfo.objects.create(name=user.username, school=user.profile.college,school_common_name=school_lowercase(user.profile.college), age=user.profile.age, firstname=user.profile.first_name,lastname=user.profile.last_name,gender =user.profile.gender)
             ProfilePic.objects.create(user=newuser,images='default.png')
             newuser.save()
             user.save()
@@ -59,7 +59,7 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'tinder/signup.html', {'form': form})
 
-def activate(request, uidb64, token, backend='django.contrib.auth.backends.ModelBackend'):
+def confirmation_email_income(request, uidb64, token, backend='django.contrib.auth.backends.ModelBackend'):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -75,21 +75,21 @@ def activate(request, uidb64, token, backend='django.contrib.auth.backends.Model
     else:
         return HttpResponse('''Activation link is invalid! <META HTTP-EQUIV="Refresh" CONTENT="5;URL=/login">''')
 
-def your_subject_page(request,user_id):
+def my_profile(request,user_id):
     User = UserInfo.objects.get(name=request.user.username)
     comments = Comment.objects.filter(post=request.user.id)
     pic = ProfilePic.objects.get(user=User)
     if request.POST.get('subject_good'):
-        subject = SubjectContainer.objects.create(subject_name=request.POST['subject_good'], subject_store=stringforsearch(request.POST['subject_good']))
+        subject = SubjectContainer.objects.create(subject_name=request.POST['subject_good'], subject_store=search_lowercase(request.POST['subject_good']))
         U1=UserInfo.objects.get(name=request.user.username)
         U1.expertise_subject.add(subject)
         U1.save()
         return render(request, 'tinder/your_subject.html', {'comments': comments,'pic':pic,'name': UserInfo.objects.get(id=user_id),'subject': UserInfo.objects.get(name=request.user.username).expertise_subject.all()})
     return render(request,'tinder/your_subject.html', {'comments': comments,'pic':pic,'name': UserInfo.objects.get(id=user_id),'subject': UserInfo.objects.get(name=request.user.username).expertise_subject.all(),'test':UserInfo.objects.get(name=request.user.username).match.all()})
-def successlogin(request):
+def login_redirect(request):
     if request.POST.get('login'):
         return render(request, 'tinder/home.html', {'name': request.user.username })
-def another_profile(request,user_id):
+def searched_profile(request,user_id):
     pic = ProfilePic.objects.get(user=user_id)
     comments = Comment.objects.filter(post=request.user.id)
     modelget = get_object_or_404(UserInfo,id=user_id)
@@ -125,21 +125,21 @@ def another_profile(request,user_id):
     return render(request,'tinder/profile.html',{'comments': comments,'pic':pic,'profile': modelget,'subject':modelget.expertise_subject.all(),'name': UserInfo.objects.get(name =request.user.username),"chat_room_name":Url_chat})
 
 
-def adddata(request):
+def facebook_additional_data_request(request):
     if request.method == "POST":
         form = AdditionalForm(request.POST)
         if form.is_valid():
             school = form.cleaned_data.get('school')
             adddata = UserInfo.objects.get(name=request.user.username)
             adddata.school = school
-            adddata.school_common_name = stringforschool(school)
+            adddata.school_common_name = school_lowercase(school)
             adddata.save()
             return HttpResponseRedirect('/')
     else:
         form = AdditionalForm()
     return render(request, 'tinder/adddata.html', {'form': form})
 
-def home_page(request):
+def homepage(request):
     """search here"""
     select_sub = []
     sendPOST = 0
@@ -150,9 +150,9 @@ def home_page(request):
     if request.POST.get('subject_find'):
         sendPOST = 1
         infoma = {}
-        what_sub = stringforsearch(request.POST['subject_find'])
+        what_sub = search_lowercase(request.POST['subject_find'])
         if request.POST['filter'] != "" and request.POST['location_school'] !=" ":
-            select_sub = UserInfo.objects.filter(expertise_subject__subject_store=what_sub,school_common_name=stringforschool(request.POST['location_school']),gender=request.POST['filter'])
+            select_sub = UserInfo.objects.filter(expertise_subject__subject_store=what_sub,school_common_name=school_lowercase(request.POST['location_school']),gender=request.POST['filter'])
             for key in select_sub:
                 infoma[key] = ProfilePic.objects.get(user=key)
         elif request.POST['filter'] != "":
@@ -161,7 +161,7 @@ def home_page(request):
                 infoma[key] = ProfilePic.objects.get(user=key)
         elif request.POST['location_school'] != "":
             select_sub = UserInfo.objects.filter(expertise_subject__subject_store=what_sub,
-                                                     school_common_name=stringforschool(request.POST['location_school']))
+                                                     school_common_name=school_lowercase(request.POST['location_school']))
             for key in select_sub:
                 infoma[key] = ProfilePic.objects.get(user=key)
         else:
@@ -172,7 +172,7 @@ def home_page(request):
     close_old_connections()
     db.connection.close()
     return render(request,'tinder/home.html',{ 'name':UserInfo.objects.get(name=request.user.username), "search_size": len(select_sub),'sendPOST':sendPOST,'test':UserInfo.objects.get(name=request.user.username).request.all()})
-def select_delete(request,user_id):
+def delete_subject(request,user_id):
     User1 = UserInfo.objects.get(id=user_id)
     modelget = get_object_or_404(UserInfo, id=user_id)
     num = request.POST.getlist("subject_list")
@@ -217,7 +217,7 @@ def match(request,user_id):
             UserInfo.objects.get(id=user_id).increase_noti_count()
             UserInfo.objects.get(id=user_id).save()
             return render(request,'tinder/profile.html', {'already_match':already_match,'comments': comments,'pic': pic,'name': UserInfo.objects.get(name=request.user.username),'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),'test':UserInfo.objects.get(name=request.user.username).match.all(),'check':1,'profile':UserInfo.objects.get(id=user_id),'chat_room_name':Url_chat})
-def Unmatched(request,user_id):
+def unmatch(request,user_id):
     Username = UserInfo.objects.get(name=request.user.username)
     pic = ProfilePic.objects.get(user=user_id)
     comments = Comment.objects.filter(post=request.user.id)
@@ -241,7 +241,7 @@ def Unmatched(request,user_id):
                                                    'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),
                                                    'test': UserInfo.objects.get(name=request.user.username).match.all(),
                                                     'profile': UserInfo.objects.get(id=user_id),'chat_room_name':Url_chat})
-def profile_accept(request,user_id):
+def accept_request(request,user_id):
     Username = UserInfo.objects.get(name=request.user.username)
     pic = ProfilePic.objects.get(user=user_id)
     match_guy = UserInfo.objects.get(id=user_id)
@@ -265,7 +265,7 @@ def profile_accept(request,user_id):
         request_obj = Username.request.get(request_list=match_guy.name,receiver=Username.name)
         Username.request.remove(request_obj)
         return HttpResponseRedirect(reverse('tinder:match_request', args=(Username.id,)))
-    return render(request,'tinder/profile_accept.html',{'comments':comments,'pic':pic,'name': UserInfo.objects.get(name=request.user.username),'chat_room_name':chat_room_name,'name':UserInfo.objects.get(name=request.user.username),'profile': UserInfo.objects.get(id=user_id),'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),'request': Username.request.get(request_list=match_guy.name)})
+    return render(request,'tinder/accept_request.html',{'comments':comments,'pic':pic,'name': UserInfo.objects.get(name=request.user.username),'chat_room_name':chat_room_name,'name':UserInfo.objects.get(name=request.user.username),'profile': UserInfo.objects.get(id=user_id),'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),'request': Username.request.get(request_list=match_guy.name)})
 def students_list(request,user_id):
     match_list_id = UserInfo.objects.get(name=request.user.username).match.all()
     list_match = {}
@@ -276,7 +276,7 @@ def students_list(request,user_id):
         value = list_sort[0]+"_"+list_sort[1]
         list_match[key]=value
     return render(request,'tinder/students_list.html',{"name":UserInfo.objects.get(name=request.user.username),'tutor_list':UserInfo.objects.get(id=user_id).match.all(),'list_match':list_match})
-def watch_profile(request,user_id):
+def another_profile(request,user_id):
     match_guy = UserInfo.objects.get(id=user_id)
     post = get_object_or_404(UserInfo, name=match_guy.name)
     pic = ProfilePic.objects.get(user=user_id)
@@ -304,7 +304,7 @@ def watch_profile(request,user_id):
         unmatch_obj2= match_guy.match.get(user_one=Username.name,user_two=match_guy.name)
         match_guy.match.remove(unmatch_obj2)
         return HttpResponseRedirect(reverse('tinder:students_list', args=(Username.id,)))
-    return render(request,'tinder/watch_profile.html',{'pic':pic,'name':UserInfo.objects.get(name=request.user.username),'profile':UserInfo.objects.get(id=user_id),'post': post, 'comments': comments, 'new_comment': new_comment, 'comment_form': comment_form})
+    return render(request,'tinder/another_profile.html',{'pic':pic,'name':UserInfo.objects.get(name=request.user.username),'profile':UserInfo.objects.get(id=user_id),'post': post, 'comments': comments, 'new_comment': new_comment, 'comment_form': comment_form})
 
 def edit_profile(request,user_id):
     User = UserInfo.objects.get(name=request.user.username)
@@ -321,11 +321,11 @@ def edit_profile(request,user_id):
         form = Editprofileform(instance=User)
         formpic = profilepicture(instance=Pic)
     return render(request,'tinder/edit_profile.html',{"pic":Pic,'form':form,'formpic':formpic})
-def stringforsearch(keyword):
+def search_lowercase(keyword):
     keyword = keyword.lower()
     keyword = keyword.replace(' ', '')
     return keyword
-def stringforschool(keyword):
+def school_lowercase(keyword):
     keyword = keyword.upper()
     keyword = keyword.replace(' ','')
     return keyword

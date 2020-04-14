@@ -139,7 +139,7 @@ bg{
             <div class="col-md-6">
                 <div class="expertise-item">
                     <table id="good_subject_table">
-    <form action="{% url 'tinder:select_delete' name.id %}" method="post">
+    <form action="{% url 'tinder:delete_subject' name.id %}" method="post">
     {% for subject_name in subject.all %}
         <tr><td><input type="checkbox" name="subject_list" id="subject_name:{{ forloop.counter }}" value="{{ subject_name.id }}"><label for="subject_name{{ forloop.counter }}">{{ forloop.counter }}: {{ subject_name }}</label></td></tr><p></p>
     {% endfor %}
