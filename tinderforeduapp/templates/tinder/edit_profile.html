@@ -77,7 +77,7 @@
   <p>You can edit profile here.</br>Type info that you want to change and click Continue.</p>
     {% csrf_token %}
     <img src="{{ pic.images.url }}" >
-    {{ formpic }}
+    {{ picture_edit_form }}
     {% for field in form %}
       {% if forloop.counter0 < 4 %}
       <input class="form-control" required id="{{ field.id_for_label }}" placeholder="{{ field.html_name|title }}" name="{{ field.html_name }}" type="text" value="{{ field.value }}"/><p></p>

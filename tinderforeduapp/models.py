@@ -29,7 +29,7 @@ class MatchContainer(models.Model):
     user_two = models.TextField(max_length=200, blank=True)
 
     def __str__(self):
-        return self.match
+        return self.user_one
 
 
 class UserInfo(models.Model):
