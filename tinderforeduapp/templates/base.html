@@ -7,7 +7,7 @@
     <h1>Match and Learn</h1>
         <h2>Welcome, {{ user.username }}!</h2>
     <a href="{% url 'tinder:logout' %}">logout</a>
-   <p>search for some one you're looking for</p><p>{{ name.fullname }}</p>
+   <p>search for some one you're looking for</p><p>{{ name.firstname }}</p>
     <form method="POST">
         <input name="subject_find" id="subject_find_id" placeholder="Enter a subject" />
         <input type="submit" value="search">

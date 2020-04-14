@@ -21,7 +21,7 @@ def room(request, room_name):
             usercheck2 = Savechat.objects.get(name=room_name).user2
     close_old_connections()
     db.connection.close()
-    return render(request, 'chat/room.html', {'name':Userinfo.objects.get(name=request.user.username),'room_name': room_name,
+    return render(request, 'chat/room.html', {'name':UserInfo.objects.get(name=request.user.username),'room_name': room_name,
                                                       'log': log,
                                                       'usercheck1': usercheck1,
                                                       'usercheck2': usercheck2,
