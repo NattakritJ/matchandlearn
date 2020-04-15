@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from .forms import SignUpForm, CommentForm, AdditionalForm, Editprofileform, profilepicture
+from .forms import SignUpForm, CommentForm, AdditionalForm, EditProfileForm, ProfilePictureForm
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
@@ -57,7 +57,7 @@ def signup(request):
             # send verification email to user's email
             site_url = get_current_site(request)
             mail_subject = 'Please verify your email address.'
-            message = render_to_string('tinder/acc_active_email.html', {
+            message = render_to_string('tinder/send_email_template.html', {
                 'user': user,
                 'domain': site_url.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -504,9 +504,9 @@ def edit_profile(request, user_id):
     # if user send edited value
     if request.method == "POST":
         # edit UserInfo object that linked with edit profile form
-        form = Editprofileform(request.POST, instance=login_user_object)
+        form = EditProfileForm(request.POST, instance=login_user_object)
         # edit picture object that linked with picture edit form
-        picture_edit_form = profilepicture(request.POST, request.FILES, instance=login_user_profile_picture)
+        picture_edit_form = ProfilePictureForm(request.POST, request.FILES, instance=login_user_profile_picture)
         # if all form is valid
         if form.is_valid() and picture_edit_form.is_valid():
             # save all value
@@ -515,8 +515,8 @@ def edit_profile(request, user_id):
             return HttpResponseRedirect(reverse('tinder:my_profile', args=(user_id,)))
     # send form to template
     else:
-        form = Editprofileform(instance=login_user_object)
-        picture_edit_form = profilepicture(instance=login_user_profile_picture)
+        form = EditProfileForm(instance=login_user_object)
+        picture_edit_form = ProfilePictureForm(instance=login_user_profile_picture)
     return render(request, 'tinder/edit_profile.html', {"pic": login_user_profile_picture,
                                                         'form': form, 'picture_edit_form': picture_edit_form})
 
