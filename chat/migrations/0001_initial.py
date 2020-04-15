@@ -12,12 +12,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Savechat',
+            name='ChatLog',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.TextField(blank=True)),
-                ('user1', models.TextField(blank=True)),
-                ('user2', models.TextField(blank=True)),
+                ('user_one', models.TextField(blank=True)),
+                ('user_two', models.TextField(blank=True)),
                 ('chat', models.TextField(blank=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True)),
             ],

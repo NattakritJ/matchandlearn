@@ -1,10 +1,10 @@
 from django.contrib import admin
 from .models import *
-from chat.models import Savechat
+from chat.models import ChatLog
 
 admin.site.register(Profile)
 admin.site.register(UserInfo)
-admin.site.register(Savechat)
+admin.site.register(ChatLog)
 admin.site.register(Comment)
 admin.site.register(ProfilePic)
 admin.site.register(MatchContainer)
