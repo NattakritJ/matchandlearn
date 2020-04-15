@@ -88,7 +88,7 @@ bg{
     <li><a name = "Privacy Policy" href="{% url 'tinder:privacy' %}">Privacy Policy</a></li>
     <li style="float:right"><a href="{% url 'tinder:logout' %}">Logout</a></li>
     <li style="float:right"><a href="{% url 'tinder:faq' %}">Help</a></li>
-    <li style="float:right"><a href="/{{ name.id }}/your_subject">Profile : {{ user.first_name }}</a></li>
+    <li style="float:right"><a href="/{{ name.id }}/my_profile">Profile : {{ user.first_name }}</a></li>
 </ul>
 <body id="page-top" data-spy="scroll" data-target=".navbar">
 <div id="main-wrapper">
@@ -160,7 +160,7 @@ bg{
     <form method="POST">
        {% csrf_token %}
        <div class="form-group">
-          <input class="form-control" name="subject_good" id="subject_good_id" placeholder="Enter a subject" />
+          <input class="form-control" name="expertise_subject_form" id="subject_good_id" placeholder="Enter a subject" />
        </div>
           <button name="add_button" type="submit" value="add" class="btn btn-primary">Submit</button>
     </form>

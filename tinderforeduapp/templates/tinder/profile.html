@@ -89,7 +89,7 @@ bg{
     <li><a name = "Privacy Policy" href="{% url 'tinder:privacy' %}">Privacy Policy</a></li>
     <li style="float:right"><a href="{% url 'tinder:logout' %}">Logout</a></li>
     <li style="float:right"><a href="{% url 'tinder:faq' %}">Help</a></li>
-    <li style="float:right"><a href="/{{ name.id }}/your_subject">Profile : {{ user.first_name }}</a></li>
+    <li style="float:right"><a href="/{{ name.id }}/my_profile">Profile : {{ user.first_name }}</a></li>
 </ul>
 <body id="page-top" data-spy="scroll" data-target=".navbar">
 <div id="main-wrapper">
@@ -127,7 +127,7 @@ bg{
         <div class="row">
             <div class="col-md-12">
                 <div>
-                    {% if not check %}
+                    {% if not match_send %}
                     <h2>Do you want to match this person?</h2>
                     {% else %}
                     <h2>Want to change your mind?</h2>
@@ -142,7 +142,7 @@ bg{
                 {% if already_match %}
                     <p>you was send the request to this user or user was send the request to you</p>
                 {% else %}
-                    {% if check %}
+                    {% if match_send %}
                     <form method="post" action="{% url 'tinder:unmatched' profile.id %}">
                         {% csrf_token %}
                         <button class="btn btn-primary"  name="Unmatched" value="Unmatched" >Unmatched</button>

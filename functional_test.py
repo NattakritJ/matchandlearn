@@ -154,7 +154,7 @@ class signUp(unittest.TestCase):
 
     def test_can_add_and_remove_good_subject(self):
         # Pure wants to add his good subject so he clicks good subject link
-        self.browser.get('http://127.0.0.1:8000/66/your_subject/')
+        self.browser.get('http://127.0.0.1:8000/66/my_profile/')
 
         # he notices the header mention Enter your good subject
         self.assertIn('', self.browser.title)
