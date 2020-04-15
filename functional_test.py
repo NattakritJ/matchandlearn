@@ -268,8 +268,8 @@ class Chat(unittest.TestCase):
         usercheck = self.browser.find_element_by_tag_name('h2').text
         self.assertIn('Login as : pure', usercheck)
         self.assertIn('Chat Room', self.browser2.title)
-        usercheck2 = self.browser2.find_element_by_tag_name('h2').text
-        self.assertIn('Login as : tongu19541', usercheck2)
+        user_check_two = self.browser2.find_element_by_tag_name('h2').text
+        self.assertIn('Login as : tongu19541', user_check_two)
 
         # Pure and Tong notices the chat textarea
         chatbox = self.browser.find_element_by_id('chat-log')

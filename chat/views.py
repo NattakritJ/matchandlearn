@@ -1,30 +1,37 @@
 # chat/views.py
 from django.shortcuts import render
 from .models import ChatLog
-from django import db
-from django.db import close_old_connections
 from tinderforeduapp.models import *
 
 
+# chat room
 def room(request, room_name):
-    splitlog = []
+    # store all chat message in list
+    split_log = []
+    # store all chat in one line (string)
     log = ""
+    # list of user associate in chat room
     user = room_name.split("_")
-    usercheck1 = user[0]
-    usercheck2 = user[1]
+    # send associate user to template to check that logged in user is associate in this chat or not
+    user_check_one = user[0]
+    user_check_two = user[1]
+    # get logged in username
     username = request.user.username
-    if ChatLog.objects.filter(name=room_name, user_one=usercheck1, user_two=usercheck2).exists():
+    # check that this chat room have chat log or not
+    if ChatLog.objects.filter(name=room_name, user_one=user_check_one, user_two=user_check_two).exists():
+        # if logged in user is associate with this chat log
         if (ChatLog.objects.get(name=room_name).user_one == username) or (
                 ChatLog.objects.get(name=room_name).user_two == username):
+            # load chat from ChatLog object into log
             log = ChatLog.objects.get(name=room_name).chat
-            splitlog = log.split("`~`~`~`~`~`")
-            usercheck1 = ChatLog.objects.get(name=room_name).user_one
-            usercheck2 = ChatLog.objects.get(name=room_name).user_two
-    close_old_connections()
-    db.connection.close()
+            # Split log and store it in list when found "`~`~`~`~`~`" in log string
+            split_log = log.split("`~`~`~`~`~`")
+            # assign user on ChatLog to check user privilege
+            user_check_one = ChatLog.objects.get(name=room_name).user_one
+            user_check_two = ChatLog.objects.get(name=room_name).user_two
     return render(request, 'chat/room.html',
                   {'name': UserInfo.objects.get(name=request.user.username), 'room_name': room_name,
                    'log': log,
-                   'usercheck1': usercheck1,
-                   'usercheck2': usercheck2,
-                   'splitlog': splitlog})
+                   'user_check_one': user_check_one,
+                   'user_check_two': user_check_two,
+                   'split_log': split_log})

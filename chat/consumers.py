@@ -3,13 +3,17 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import ChatLog
 
 
+# open Websocket for chat room
 class ChatConsumer(AsyncWebsocketConsumer):
+    # connect chat room to Websocket
     async def connect(self):
+        # set Websocket scope by room url
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
+        # if this is the first time connect to chat room, create ChatLog object
         if not ChatLog.objects.filter(name=self.room_name).exists():
             ChatLog.objects.create(name=self.room_name, user_one=self.room_name.split('_')[0],
-                                    user_two=self.room_name.split('_')[1])
+                                   user_two=self.room_name.split('_')[1])
 
         # Join room group
         await self.channel_layer.group_add(
@@ -19,6 +23,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
+    # when user close chat room, disconnect Websocket
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(
@@ -43,9 +48,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from room group
     async def chat_message(self, event):
         message = event['message']
-        adddata = ChatLog.objects.get(name=self.room_name)
-        adddata.chat += message + "`~`~`~`~`~`"
-        adddata.save()
+        # get chat room ChatLog object and append chat message real time when users chat
+        append_data = ChatLog.objects.get(name=self.room_name)
+        append_data.chat += message + "`~`~`~`~`~`"
+        append_data.save()
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({

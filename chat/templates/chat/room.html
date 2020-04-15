@@ -103,12 +103,12 @@ bg{
 <div class="row no-gutters center">
 	<div class="col-md-6 no-gutters">
 		<div class="leftside d-flex justify-content-center align-items-center">
-			<textarea id="chat-log2" style="overflow:hidden" cols="100" rows="20" readonly>{% for msg in splitlog %}{% if user.username in msg %}&#13;{% else %}{{ msg }}&#13;{% endif %}{% endfor %}</textarea><br/>
+			<textarea id="chat-log2" style="overflow:hidden" cols="100" rows="20" readonly>{% for msg in split_log %}{% if user.username in msg %}&#13;{% else %}{{ msg }}&#13;{% endif %}{% endfor %}</textarea><br/>
 		</div>
 	</div>
 	<div class="col-md-6 no-gutters">
 		<div class="rightside d-flex justify-content-center align-items-center">
-            <textarea id="chat-log" onscroll="SyncScroll(this)" cols="100" rows="20" readonly>{% for msg in splitlog %}{% if user.username in msg %}{{ msg }}&#13;{% else %}&#13;{% endif %}{% endfor %}</textarea><br/>
+            <textarea id="chat-log" onscroll="SyncScroll(this)" cols="100" rows="20" readonly>{% for msg in split_log %}{% if user.username in msg %}{{ msg }}&#13;{% else %}&#13;{% endif %}{% endfor %}</textarea><br/>
 		</div>
 	</div>
 </div>
@@ -130,7 +130,7 @@ Input text here :
             width: 100%;
         }
     </style>
-    {% if user.username == usercheck1 or user.username == usercheck2 %}
+    {% if user.username == user_check_one or user.username == user_check_two %}
         <input id="chat-message-input" type="text" size="100"/><br/>
         <input id="chat-message-submit" type="button" value="Send"/>
     {% else %}
