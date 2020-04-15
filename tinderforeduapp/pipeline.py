@@ -4,7 +4,9 @@ from .models import UserInfo, ProfilePic
 from django.contrib.auth.models import User
 from social_core.pipeline.user import get_username as social_get_username
 from datetime import datetime
+
 user_email = ""
+
 
 # get email from facebook
 def get_email(backend, user, response, *args, **kwargs):
@@ -15,6 +17,8 @@ def get_email(backend, user, response, *args, **kwargs):
         user_email = (response.get('name')).split(" ")[0] + (response.get('name')).split(" ")[1]
     else:
         user_email = (response.get('email')).split("@")[0]
+
+
 # create user UserInfo object
 def user_profile_db(backend, user, response, *args, **kwargs):
     # check if UserInfo object not exist
@@ -24,7 +28,7 @@ def user_profile_db(backend, user, response, *args, **kwargs):
         birth_date = response.get('birthday')
         # calculate age from current date
         born = datetime.strptime(birth_date, '%m/%d/%Y')
-        age = int((datetime.today() - born).days/365)
+        age = int((datetime.today() - born).days / 365)
         if response.get('gender') == 'male':
             gender = 'Male'
         if response.get('gender') == 'female':
@@ -32,22 +36,24 @@ def user_profile_db(backend, user, response, *args, **kwargs):
         # if facebook user doesn't have email associate in account
         if response.get('email') is None:
             # create UserInfo object for new user
-            user = UserInfo.objects.create(name=(response.get('name')).split(" ")[0] + (response.get('name')).split(" ")[1],
-                                    school='',
-                                    age=age,
-                                    firstname=(response.get('name')).split(" ")[0],
-                                    lastname=(response.get('name')).split(" ")[1],
-                                    gender=gender, fb_link=response.get('link'))
+            user = UserInfo.objects.create(
+                name=(response.get('name')).split(" ")[0] + (response.get('name')).split(" ")[1],
+                school='',
+                age=age,
+                firstname=(response.get('name')).split(" ")[0],
+                lastname=(response.get('name')).split(" ")[1],
+                gender=gender, fb_link=response.get('link'))
         else:
             # create UserInfo object for new user
             user = UserInfo.objects.create(name=(response.get('email')).split("@")[0],
-                                school='',
-                                age=age,
-                                firstname=(response.get('name')).split(" ")[0],
-                                lastname=(response.get('name')).split(" ")[1],
-                                gender=gender, fb_link=response.get('link'))
+                                           school='',
+                                           age=age,
+                                           firstname=(response.get('name')).split(" ")[0],
+                                           lastname=(response.get('name')).split(" ")[1],
+                                           gender=gender, fb_link=response.get('link'))
         # assign default profile picture for new user
         ProfilePic.objects.create(user=user, images='default.png')
+
 
 # set username for new user by using email account (remove email domain)
 def get_username(strategy, details, backend, user=None, *args, **kwargs):

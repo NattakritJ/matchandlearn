@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
 # Store all subject that add by all user
 class SubjectContainer(models.Model):
     subject_name = models.TextField(max_length=200, blank=True)
@@ -10,6 +11,7 @@ class SubjectContainer(models.Model):
 
     def __str__(self):
         return self.subject_name
+
 
 # Store all request that sent between user
 class RequestSender(models.Model):
@@ -20,6 +22,7 @@ class RequestSender(models.Model):
     def __str__(self):
         return self.request_list
 
+
 # Store all matched user
 class MatchContainer(models.Model):
     user_one = models.TextField(max_length=200, blank=True)
@@ -27,6 +30,7 @@ class MatchContainer(models.Model):
 
     def __str__(self):
         return self.user_one
+
 
 # Main model. Store most of user data
 class UserInfo(models.Model):
@@ -46,18 +50,22 @@ class UserInfo(models.Model):
 
     def __str__(self):
         return self.name
+
     # clear notification when user click request list
     def read(self):
         self.match_request = 0
         self.save()
+
     # increase notification count when user receive match request
     def increase_noti_count(self):
         self.match_request = self.match_request + 1
         self.save()
+
     # decrease notification count when user cancel match request
     def decrease_noti_count(self):
         self.match_request = self.match_request - 1
         self.save()
+
 
 # Store all comment on all user
 class Comment(models.Model):
@@ -74,6 +82,7 @@ class Comment(models.Model):
     def __str__(self):
         return 'Comment to {} by {}'.format(self.post, self.name)
 
+
 # Store user data, linked with User and UserInfo
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -86,6 +95,7 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
 
 # Store user's profile picture and set default picture for all user
 class ProfilePic(models.Model):
