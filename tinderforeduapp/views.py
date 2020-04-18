@@ -146,7 +146,7 @@ def searched_profile(request, user_id):
     # create string with sorted username format (user1_user2)
     chat_url = chat_sort_username[0] + "_" + chat_sort_username[1]
     # if logged in user send match request to searched user
-    if selected_user_object.request.filter(request_list=login_user_object.name).exists():
+    if selected_user_object.request.filter(request_sender=login_user_object.name).exists():
         # send flag match_send to template to change match request button to unsent request button
         return render(request, 'tinder/profile.html',
                       {'comments': comments, 'pic': selected_user_profile_picture,
@@ -256,7 +256,7 @@ def delete_subject(request, user_id):
     list_subject = request.POST.getlist("subject_list")
     if len(list_subject) == 0:
         pass
-    # if user send post with selected subject to delete
+    # if user send POST with selected subject to delete
     else:
         for subject in list_subject:
             # delete subject that link to user
@@ -275,9 +275,9 @@ def match_request(request, user_id):
     login_user_object = UserInfo.objects.get(name=request.user.username)
     login_user_object.read()
     login_user_object.save()
-    # append all user UserInfo object found in logged in user's request_list (on RequestSender model)
+    # append all user UserInfo object found in logged in user's request_sender (on RequestSender model)
     for request_name in login_user_all_match_request:
-        match_list.append(UserInfo.objects.get(name=request_name.request_list))
+        match_list.append(UserInfo.objects.get(name=request_name.request_sender))
     # return list of user's object that sent match request to logged in user
     return render(request, 'tinder/match_request.html', {'name': UserInfo.objects.get(name=request.user.username),
                                                          'match_request': UserInfo.objects.get(
@@ -305,9 +305,9 @@ def match(request, user_id):
     already_match = 0
     if request.method == "POST":
         # if user was sent match request or selected user sent match request to logged in user
-        if selected_user_object.request.filter(request_list=login_user_object.name, receiver=selected_user_object.name)\
-                or login_user_object.request.filter(request_list=selected_user_object.name,
-                                                    receiver=login_user_object.name):
+        if selected_user_object.request.filter(request_sender=login_user_object.name, request_receiver=selected_user_object.name)\
+                or login_user_object.request.filter(request_sender=selected_user_object.name,
+                                                    request_receiver=login_user_object.name):
             # change match flag to tell template that user was sent request
             already_match = 1
             return render(request, 'tinder/profile.html',
@@ -319,9 +319,9 @@ def match(request, user_id):
                            'profile': UserInfo.objects.get(id=user_id), 'chat_room_name': chat_url})
         # send match request to selected user
         else:
-            user_name = RequestSender.objects.create(request_list=login_user_object.name,
+            user_name = RequestSender.objects.create(request_sender=login_user_object.name,
                                                      request_message=request.POST['text_request'],
-                                                     receiver=selected_user_object.name)
+                                                     request_receiver=selected_user_object.name)
             # add logged in user username to selected user request list
             selected_user_object.request.add(user_name)
             # increase notification count on selected user
@@ -355,8 +355,8 @@ def unmatch(request, user_id):
     # if logged in user send unmatch form
     if request.POST.get('Unmatched'):
         # get linked object of logged in user and selected user
-        remove_match = selected_user_object.request.get(request_list=login_user_object.name,
-                                                        receiver=selected_user_object.name)
+        remove_match = selected_user_object.request.get(request_sender=login_user_object.name,
+                                                        request_receiver=selected_user_object.name)
         # remove linked object
         selected_user_object.request.remove(remove_match)
         # decrease notification count on selected user
@@ -401,8 +401,8 @@ def accept_request(request, user_id):
         # add linked match object to logged in user
         login_user_object.match.add(match_obj_login_user)
         # get request linked object between selected user and logged in user
-        request_obj = login_user_object.request.get(request_list=selected_user_object.name,
-                                                    receiver=login_user_object.name)
+        request_obj = login_user_object.request.get(request_sender=selected_user_object.name,
+                                                    request_receiver=login_user_object.name)
         # remove that linked request object
         login_user_object.request.remove(request_obj)
         # create linked match object to link between logged in user and select user
@@ -414,8 +414,8 @@ def accept_request(request, user_id):
     # if logged in user decided to decline match request
     if request.POST.get('decline'):
         # get request linked object between selected user and logged in user
-        request_obj = login_user_object.request.get(request_list=selected_user_object.name,
-                                                    receiver=login_user_object.name)
+        request_obj = login_user_object.request.get(request_sender=selected_user_object.name,
+                                                    request_receiver=login_user_object.name)
         # remove that linked request object
         login_user_object.request.remove(request_obj)
         return HttpResponseRedirect(reverse('tinder:match_request', args=(login_user_object.id,)))
@@ -424,7 +424,7 @@ def accept_request(request, user_id):
                    'name': UserInfo.objects.get(name=request.user.username),
                    'chat_room_name': chat_url, 'profile': UserInfo.objects.get(id=user_id),
                    'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),
-                   'request': login_user_object.request.get(request_list=selected_user_object.name)})
+                   'request': login_user_object.request.get(request_sender=selected_user_object.name)})
 
 
 # show all student and tutor matched list on logged in user

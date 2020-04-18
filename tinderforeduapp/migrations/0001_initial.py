@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             name='RequestSender',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('request_list', models.TextField(blank=True, max_length=200)),
+                ('request_sender', models.TextField(blank=True, max_length=200)),
                 ('request_message', models.TextField(blank=True, max_length=600)),
                 ('receiver', models.TextField(blank=True, max_length=200)),
             ],

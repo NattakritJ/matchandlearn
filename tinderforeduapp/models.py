@@ -15,12 +15,12 @@ class SubjectContainer(models.Model):
 
 # Store all request that sent between user
 class RequestSender(models.Model):
-    request_list = models.TextField(max_length=200, blank=True)
+    request_sender = models.TextField(max_length=200, blank=True)
     request_message = models.TextField(max_length=600, blank=True)
-    receiver = models.TextField(max_length=200, blank=True)
+    request_receiver = models.TextField(max_length=200, blank=True)
 
     def __str__(self):
-        return self.request_list
+        return self.request_sender
 
 
 # Store all matched user
