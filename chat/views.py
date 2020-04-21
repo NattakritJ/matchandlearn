@@ -18,17 +18,17 @@ def room(request, room_name):
     # get logged in username
     username = request.user.username
     # check that this chat room have chat log or not
-    if ChatLog.objects.filter(name=room_name, user_one=user_check_one, user_two=user_check_two).exists():
+    if ChatLog.objects.filter(name=room_name, partner_username=user_check_one, your_username=user_check_two).exists():
         # if logged in user is associate with this chat log
-        if (ChatLog.objects.get(name=room_name).user_one == username) or (
-                ChatLog.objects.get(name=room_name).user_two == username):
+        if (ChatLog.objects.get(name=room_name).partner_username == username) or (
+                ChatLog.objects.get(name=room_name).your_username == username):
             # load chat from ChatLog object into log
             log = ChatLog.objects.get(name=room_name).chat
             # Split log and store it in list when found "`~`~`~`~`~`" in log string
             split_log = log.split("`~`~`~`~`~`")
             # assign user on ChatLog to check user privilege
-            user_check_one = ChatLog.objects.get(name=room_name).user_one
-            user_check_two = ChatLog.objects.get(name=room_name).user_two
+            user_check_one = ChatLog.objects.get(name=room_name).partner_username
+            user_check_two = ChatLog.objects.get(name=room_name).your_username
     return render(request, 'chat/room.html',
                   {'name': UserInfo.objects.get(name=request.user.username), 'room_name': room_name,
                    'log': log,

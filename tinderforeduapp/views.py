@@ -105,7 +105,7 @@ def my_profile(request, user_id):
     if request.POST.get('expertise_subject_form'):
         # create subject's object that contain name and common name (all lowercase) of subject enter by user
         subject = SubjectContainer.objects.create(subject_name=request.POST['expertise_subject_form'],
-                                                  subject_store=search_lowercase(
+                                                  subject_common_name=search_lowercase(
                                                       request.POST['expertise_subject_form']))
         # add created subject into user's object
         add_subject = UserInfo.objects.get(name=request.user.username)
@@ -396,8 +396,8 @@ def accept_request(request, user_id):
     # if logged in user decided to accept match request
     if request.POST.get('accept'):
         # create linked match object to link between selected user and logged in user
-        match_obj_login_user = MatchContainer.objects.create(user_one=selected_user_object.name,
-                                                             user_two=login_user_object.name)
+        match_obj_login_user = MatchContainer.objects.create(partner_username=selected_user_object.name,
+                                                             your_username=login_user_object.name)
         # add linked match object to logged in user
         login_user_object.match.add(match_obj_login_user)
         # get request linked object between selected user and logged in user
@@ -406,8 +406,8 @@ def accept_request(request, user_id):
         # remove that linked request object
         login_user_object.request.remove(request_obj)
         # create linked match object to link between logged in user and select user
-        match_obj_selected_user = MatchContainer.objects.create(user_one=login_user_object.name,
-                                                                user_two=selected_user_object.name)
+        match_obj_selected_user = MatchContainer.objects.create(partner_username=login_user_object.name,
+                                                                your_username=selected_user_object.name)
         # add linked match object to selected user
         selected_user_object.match.add(match_obj_selected_user)
         return HttpResponseRedirect(reverse('tinder:match_request', args=(login_user_object.id,)))
@@ -435,11 +435,11 @@ def students_list(request, user_id):
     list_match = {}
     for match_username in match_list:
         # get UserInfo object of matched user
-        key = UserInfo.objects.get(name=match_username.user_one)
+        key = UserInfo.objects.get(name=match_username.partner_username)
         # sort name of logged in user and matched user by alphabet
         list_sort = sorted(
             [UserInfo.objects.get(name=request.user.username).name,
-             UserInfo.objects.get(name=match_username.user_one).name])
+             UserInfo.objects.get(name=match_username.partner_username).name])
         # add value of matched user name to matched UserInfo object key
         value = list_sort[0] + "_" + list_sort[1]
         list_match[key] = value
@@ -479,13 +479,13 @@ def matched_profile(request, user_id):
         # get logged in user object
         login_user_object = UserInfo.objects.get(name=request.user.username)
         # get linked object between selected user and logged in user
-        unmatch_obj_login_user = login_user_object.match.get(user_one=selected_user_object.name,
-                                                             user_two=login_user_object.name)
+        unmatch_obj_login_user = login_user_object.match.get(partner_username=selected_user_object.name,
+                                                             your_username=login_user_object.name)
         # remove linked object from logged in user
         login_user_object.match.remove(unmatch_obj_login_user)
         # get linked object between logged in user and select user
-        unmatch_obj_selected_user = selected_user_object.match.get(user_one=login_user_object.name,
-                                                                   user_two=selected_user_object.name)
+        unmatch_obj_selected_user = selected_user_object.match.get(partner_username=login_user_object.name,
+                                                                   your_username=selected_user_object.name)
         # remove linked object from selected user
         selected_user_object.match.remove(unmatch_obj_selected_user)
         return HttpResponseRedirect(reverse('tinder:students_list', args=(login_user_object.id,)))

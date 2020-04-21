@@ -12,8 +12,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name = 'chat_%s' % self.room_name
         # if this is the first time connect to chat room, create ChatLog object
         if not ChatLog.objects.filter(name=self.room_name).exists():
-            ChatLog.objects.create(name=self.room_name, user_one=self.room_name.split('_')[0],
-                                   user_two=self.room_name.split('_')[1])
+            ChatLog.objects.create(name=self.room_name, partner_username=self.room_name.split('_')[0],
+                                   your_username=self.room_name.split('_')[1])
 
         # Join room group
         await self.channel_layer.group_add(

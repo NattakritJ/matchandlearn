@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             name='MatchContainer',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user_one', models.TextField(blank=True, max_length=200)),
-                ('user_two', models.TextField(blank=True, max_length=200)),
+                ('partner_username', models.TextField(blank=True, max_length=200)),
+                ('your_username', models.TextField(blank=True, max_length=200)),
             ],
         ),
         migrations.CreateModel(
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('subject_name', models.TextField(blank=True, max_length=200)),
-                ('subject_store', models.TextField(blank=True, max_length=200)),
+                ('subject_common_name', models.TextField(blank=True, max_length=200)),
             ],
         ),
         migrations.CreateModel(
