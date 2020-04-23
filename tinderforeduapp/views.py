@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from .forms import SignUpForm, CommentForm, AdditionalForm, EditProfileForm, ProfilePictureForm
+from .forms import SignUpForm, CommentForm, AdditionalForm, EditProfileForm, ProfilePictureForm, AddPictureForm
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
@@ -50,7 +50,7 @@ def signup(request):
                                                   age=user.profile.age, firstname=user.profile.first_name,
                                                   lastname=user.profile.last_name, gender=user.profile.gender)
             # Set user's profile picture to default and link ProfilePic object to user's object
-            ProfilePic.objects.create(user=create_user, images='default.png')
+            ProfilePic.objects.create(user=create_user, images='default.png', is_profile_pic=True)
             # Save all objects
             create_user.save()
             user.save()
@@ -97,10 +97,12 @@ def confirmation_email_income(request, uidb64, token):
 def my_profile(request, user_id):
     # get logged in user's UserInfo object
     login_user_object = UserInfo.objects.get(name=request.user.username)
-    # get logged in user's comment
-    comments = Comment.objects.filter(post=request.user.id)
+    # get only active comment
+    comments = login_user_object.comments.filter(active=True)
     # get logged in user's profile picture
-    login_user_profile_picture = ProfilePic.objects.get(user=login_user_object)
+    login_user_profile_picture = login_user_object.image.filter(is_profile_pic=True)
+    # get logged in user's additional picture
+    additional_pic = login_user_object.image.filter(is_profile_pic=False)
     # when receive POST from expertise_subject_form form
     if request.POST.get('expertise_subject_form'):
         # create subject's object that contain name and common name (all lowercase) of subject enter by user
@@ -113,10 +115,12 @@ def my_profile(request, user_id):
         add_subject.save()
         return render(request, 'tinder/my_profile.html',
                       {'comments': comments, 'pic': login_user_profile_picture,
+                       'additional_pic': additional_pic,
                        'name': UserInfo.objects.get(id=user_id),
                        'subject': UserInfo.objects.get(name=request.user.username).expertise_subject.all()})
     return render(request, 'tinder/my_profile.html',
-                  {'comments': comments, 'pic': login_user_profile_picture, 'name': UserInfo.objects.get(id=user_id),
+                  {'comments': comments, 'pic': login_user_profile_picture,
+                   'additional_pic': additional_pic, 'name': UserInfo.objects.get(id=user_id),
                    'subject': UserInfo.objects.get(name=request.user.username).expertise_subject.all(),
                    'test': UserInfo.objects.get(name=request.user.username).match.all()})
 
@@ -129,10 +133,15 @@ def login_redirect(request):
 
 # show another profile (not logged in user's profile) that clicked on search result
 def searched_profile(request, user_id):
+    # get searched user's object
+    selected_user_object = get_object_or_404(UserInfo, id=user_id)
     # get searched user's profile picture
-    selected_user_profile_picture = ProfilePic.objects.get(user=user_id)
-    # get searched user's comments
-    comments = Comment.objects.filter(post=request.user.id)
+    selected_user_profile_picture = selected_user_object.image.filter(is_profile_pic=True)
+    # get searched user's additional picture
+    additional_pic = selected_user_object.image.filter(is_profile_pic=False)
+    # get only active comment
+    selected_user_object = UserInfo.objects.get(id=user_id)
+    comments = selected_user_object.comments.filter(active=True)
     # get searched user's model
     get_user_model = get_object_or_404(UserInfo, id=user_id)
     # get searched user's object
@@ -156,7 +165,8 @@ def searched_profile(request, user_id):
                            name=request.user.username).match.all(),
                        'profile': UserInfo.objects.get(id=user_id), 'match_send': 1, "chat_room_name": chat_url})
     return render(request, 'tinder/profile.html',
-                  {'comments': comments, 'pic': selected_user_profile_picture, 'profile': get_user_model,
+                  {'comments': comments, 'pic': selected_user_profile_picture, 'additional_pic': additional_pic,
+                   'profile': get_user_model,
                    'subject': get_user_model.expertise_subject.all(),
                    'name': UserInfo.objects.get(name=request.user.username), "chat_room_name": chat_url})
 
@@ -204,37 +214,37 @@ def homepage(request):
         # if user use type 1
         if request.POST['filter'] != "" and request.POST['location_school'] != " ":
             # filter UserInfo object using subject, gender and school
-            search_filter = UserInfo.objects.filter(expertise_subject__subject_store=search_keyword,
+            search_filter = UserInfo.objects.filter(expertise_subject__subject_common_name=search_keyword,
                                                     school_common_name=school_lowercase(
                                                         request.POST['location_school']),
                                                     gender=request.POST['filter'])
             # store list of matched user in dict
             for key in search_filter:
-                user_information_dict[key] = ProfilePic.objects.get(user=key)
+                user_information_dict[key] = ProfilePic.objects.get(user=key, is_profile_pic=True)
         # if user use type 2
         elif request.POST['filter'] != "":
             # filter UserInfo object using subject and gender
-            search_filter = UserInfo.objects.filter(expertise_subject__subject_store=search_keyword,
+            search_filter = UserInfo.objects.filter(expertise_subject__subject_common_name=search_keyword,
                                                     gender=request.POST['filter'])
             # store list of matched user in dict
             for key in search_filter:
-                user_information_dict[key] = ProfilePic.objects.get(user=key)
+                user_information_dict[key] = ProfilePic.objects.get(user=key, is_profile_pic=True)
         # if user use type 3
         elif request.POST['location_school'] != "":
             # filter UserInfo object using subject and school
-            search_filter = UserInfo.objects.filter(expertise_subject__subject_store=search_keyword,
+            search_filter = UserInfo.objects.filter(expertise_subject__subject_common_name=search_keyword,
                                                     school_common_name=school_lowercase(
                                                         request.POST['location_school']))
             # store list of matched user in dict
             for key in search_filter:
-                user_information_dict[key] = ProfilePic.objects.get(user=key)
+                user_information_dict[key] = ProfilePic.objects.get(user=key, is_profile_pic=True)
         # if user use type 4
         else:
             # filter UserInfo object using subject
-            search_filter = UserInfo.objects.filter(expertise_subject__subject_store=search_keyword)
+            search_filter = UserInfo.objects.filter(expertise_subject__subject_common_name=search_keyword)
             # store list of matched user in dict
             for key in search_filter:
-                user_information_dict[key] = ProfilePic.objects.get(user=key)
+                user_information_dict[key] = ProfilePic.objects.get(user=key, is_profile_pic=True)
         # return search result
         return render(request, 'tinder/home.html',
                       {'user_information_dict': user_information_dict,
@@ -290,7 +300,7 @@ def match(request, user_id):
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get selected user (from searched result) profile picture
-    selected_user_profile_picture = ProfilePic.objects.get(user=user_id)
+    selected_user_profile_picture = ProfilePic.objects.get(user=user_id, is_profile_pic=True)
     # get selected user (from searched result) comments
     selected_user_comments = Comment.objects.filter(post=request.user.id)
     # get selected user (from searched result) object
@@ -305,7 +315,8 @@ def match(request, user_id):
     already_match = 0
     if request.method == "POST":
         # if user was sent match request or selected user sent match request to logged in user
-        if selected_user_object.request.filter(request_sender=login_user_object.name, request_receiver=selected_user_object.name)\
+        if selected_user_object.request.filter(request_sender=login_user_object.name,
+                                               request_receiver=selected_user_object.name) \
                 or login_user_object.request.filter(request_sender=selected_user_object.name,
                                                     request_receiver=login_user_object.name):
             # change match flag to tell template that user was sent request
@@ -341,9 +352,11 @@ def unmatch(request, user_id):
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get selected user profile picture
-    selected_user_profile_pic = ProfilePic.objects.get(user=user_id)
-    # get selected user comment
-    comments = Comment.objects.filter(post=request.user.id)
+    selected_user_profile_pic = ProfilePic.objects.get(user=user_id, is_profile_pic=True)
+    selected_user_object = UserInfo.objects.get(id=user_id)
+    # get only active comment
+    selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
+    comments = selected_user_comment_object.comments.filter(active=True)
     # get selected user object
     selected_user_object = UserInfo.objects.get(id=user_id)
     # get logged in user and selected user username
@@ -382,11 +395,12 @@ def accept_request(request, user_id):
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get selected user's profile picture
-    selected_user_profile_picture = ProfilePic.objects.get(user=user_id)
+    selected_user_profile_picture = ProfilePic.objects.get(user=user_id, is_profile_pic=True)
     # get selected user's object
     selected_user_object = UserInfo.objects.get(id=user_id)
-    # get selected user's comment
-    comments = Comment.objects.filter(post=user_id)
+    # get only active comment
+    selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
+    comments = selected_user_comment_object.comments.filter(active=True)
     # get logged in user and selected user username
     chat_room_username = [login_user_object.name, selected_user_object.name]
     # sort two username by alphabet
@@ -455,9 +469,10 @@ def matched_profile(request, user_id):
     # get selected user comment
     selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
     # get selected user profile picture
-    selected_user_profile_picture = ProfilePic.objects.get(user=user_id)
-    # active comment posting
+    selected_user_profile_picture = selected_user_comment_object.image.filter(is_profile_pic=True)
+    # get only active comment
     comments = selected_user_comment_object.comments.filter(active=True)
+    additional_pic = selected_user_comment_object.image.filter(is_profile_pic=False)
     new_comment = None
     # if logged in user comment on selected user
     if request.method == 'POST':
@@ -490,9 +505,34 @@ def matched_profile(request, user_id):
         selected_user_object.match.remove(unmatch_obj_selected_user)
         return HttpResponseRedirect(reverse('tinder:students_list', args=(login_user_object.id,)))
     return render(request, 'tinder/matched_profile.html',
-                  {'pic': selected_user_profile_picture, 'name': UserInfo.objects.get(name=request.user.username),
+                  {'pic': selected_user_profile_picture, 'additional_pic': additional_pic,
+                   'name': UserInfo.objects.get(name=request.user.username),
                    'profile': UserInfo.objects.get(id=user_id), 'post': selected_user_comment_object,
                    'comments': comments, 'new_comment': new_comment, 'comment_form': comment_form})
+
+
+# Add new image to user's gallery
+def add_image(request, user_id):
+    # get logged in user object
+    login_user_object = UserInfo.objects.get(name=request.user.username)
+    # if user send add image form
+    if request.method == "POST":
+        # add picture object that linked with add picture form
+        add_picture_form = AddPictureForm(request.POST, request.FILES)
+        # if all form is valid
+        if add_picture_form.is_valid():
+            new_image = add_picture_form.save(commit=False)
+            # Assign this image to login user
+            new_image.user = login_user_object
+            # set flag profile picture to false
+            new_image.is_profile_pic = False
+            # save all value
+            new_image.save()
+            return HttpResponseRedirect(reverse('tinder:my_profile', args=(user_id,)))
+    # send form to template
+    else:
+        add_picture_form = ProfilePictureForm()
+    return render(request, 'tinder/add_image.html', {'add_picture_form': add_picture_form})
 
 
 # edit logged in user profile
@@ -500,7 +540,7 @@ def edit_profile(request, user_id):
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get logged in user profile picture
-    login_user_profile_picture = ProfilePic.objects.get(user=login_user_object)
+    login_user_profile_picture = ProfilePic.objects.get(user=login_user_object, is_profile_pic=True)
     # if user send edited value
     if request.method == "POST":
         # edit UserInfo object that linked with edit profile form

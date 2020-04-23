@@ -22,7 +22,7 @@ urlpatterns = [
     path('<int:user_id>/match_request/', views.match_request, name="match_request"),
     path('<int:user_id>/accept_request/', views.accept_request, name="accept_request"),
     path('<int:user_id>/students_list/', views.students_list, name="students_list"),
-    path('<int:user_id>/matched_profile', views.matched_profile, name="matched_profile"),
+    path('<int:user_id>/matched_profile/', views.matched_profile, name="matched_profile"),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.confirmation_email_income, name='activate'),
     url(r'^password_reset/$', PasswordResetView.as_view(), name='password_reset'),
@@ -35,4 +35,5 @@ urlpatterns = [
     path('aboutus/', TemplateView.as_view(template_name="tinder/aboutus.html"), name='aboutus'),
     path('fb_data/', views.facebook_additional_data_request, name='fb_data'),
     path('<int:user_id>/edit_profile/', views.edit_profile, name="edit_profile"),
+    path('<int:user_id>/add_image/', views.add_image, name="add_image"),
 ]

@@ -104,7 +104,9 @@ bg{
     <header class="header theiaStickySidebar">
         <div class="profile-img">
             <h1>{{ profile.firstname }}'s Profile :</h1>
-            <img src="{{ pic.images.url }}" class="img-responsive" alt=""/>
+            {% for profile_pic in pic %}
+            <img src="{{ profile_pic.images.url }}" class="img-responsive" alt=""/>
+            {% endfor %}
         </div>
         <div class="content">
             <h1>{{ profile.firstname }} {{ profile.lastname }}</h1>
@@ -122,6 +124,31 @@ bg{
 
 <div class="right-col-block blocks">
 <div class="theiaStickySidebar">
+
+<section class="expertise-wrapper section-wrapper gray-bg">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div>
+                    <h2>{{ profile.firstname }}'s Gallery</h2>
+                </div>
+            </div>
+        </div>
+        <!-- .row -->
+        <div class="row">
+        {% for pic in additional_pic %}
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <a href="{{ pic.images.url }}" target="_blank">
+                        <img src="{{ pic.images.url }}" style="width:100%">
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
 <section class="expertise-wrapper section-wrapper gray-bg">
     <div class="container-fluid">
         <div class="row">

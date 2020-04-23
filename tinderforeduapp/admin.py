@@ -8,6 +8,8 @@ admin.site.register(ChatLog)
 admin.site.register(Comment)
 admin.site.register(ProfilePic)
 admin.site.register(MatchContainer)
+admin.site.register(SubjectContainer)
+admin.site.register(RequestSender)
 
 
 class CommentAdmin(admin.ModelAdmin):

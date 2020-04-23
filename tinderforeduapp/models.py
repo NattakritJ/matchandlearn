@@ -1,3 +1,4 @@
+import os
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
@@ -138,9 +139,17 @@ class Profile(models.Model):
 # Store user's profile picture and set default picture for all user
 class ProfilePic(models.Model):
     # keep user's object by linked with UserInfo class
-    user = models.OneToOneField(UserInfo, on_delete=models.CASCADE)
-    # keep user's profile image
+    user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name='image', null=True)
+    # keep user's image
     images = models.ImageField(default='default.png', upload_to='media')
+    # flag to tell image is profile picture or not
+    is_profile_pic = models.BooleanField(default=False, null=True)
+
+    def __str__(self):
+        # If object is profile picture
+        if self.is_profile_pic is True:
+            return str(self.user) + " (Profile Picture)"
+        return str(self.user)
 
 
 @receiver(post_save, sender=User)
@@ -151,3 +160,29 @@ def update_profile_signal(sender, instance, created, **kwargs):
         Profile.objects.create(user=instance)
     # save new user's data
     instance.profile.save()
+
+# when object from class ProfilePic is deleted, delete relate file
+@receiver(models.signals.post_delete, sender=ProfilePic)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    # if instance is images variable
+    if instance.images:
+        # get file path from images variable
+        if os.path.isfile(instance.images.path):
+            # delete it
+            os.remove(instance.images.path)
+
+
+@receiver(models.signals.pre_save, sender=ProfilePic)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = ProfilePic.objects.get(pk=instance.pk).images
+    except ProfilePic.DoesNotExist:
+        return False
+
+    new_file = instance.images
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)

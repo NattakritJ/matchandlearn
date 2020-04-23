@@ -56,3 +56,10 @@ class ProfilePictureForm(forms.ModelForm):
     class Meta:
         model = ProfilePic
         fields = ['images']
+
+
+# form to edit logged in user additional picture1
+class AddPictureForm(forms.ModelForm):
+    class Meta:
+        model = ProfilePic
+        fields = ['images']
