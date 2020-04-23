@@ -90,7 +90,7 @@
   {% if form.errors %}
     <p style="color: red">Username and Password didn't match.<br>Please try again.</p>
   {% endif %}
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+      <button class="btn btn-lg btn-primary btn-block" id="login_btn" type="submit">Log in</button>
   <p></p>
 <a href="{% url 'social:begin' 'facebook' %}" class="btn btn-block btn-social btn-facebook" style="color:white">
   <span class="fa fa-facebook"></span>

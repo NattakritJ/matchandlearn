@@ -143,14 +143,14 @@ bg{
             <div class="col-md-4">
                 <div class="thumbnail">
                     <a href="{{ pic.images.url }}" target="_blank">
-                        <img src="{{ pic.images.url }}" style="width:100%">
+                        <img id="pic_{{ forloop.counter }}" src="{{ pic.images.url }}" style="width:100%">
                     </a>
                 </div>
             </div>
             {% endfor %}
         </div>
         <form action="{% url 'tinder:add_image' name.id %}">
-            <input class="btn btn-primary" type="submit" value="Add image" />
+            <input class="btn btn-primary" id="add_img_btn" type="submit" value="Add image" />
             </form>
     </div>
 </section>
