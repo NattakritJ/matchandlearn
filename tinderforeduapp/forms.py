@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Comment, UserInfo, ProfilePic
+from .models import Comment, UserInfo, PictureContainer
 
 
 # form for signup page
@@ -54,12 +54,12 @@ class EditProfileForm(forms.ModelForm):
 # form to edit logged in user profile picture
 class ProfilePictureForm(forms.ModelForm):
     class Meta:
-        model = ProfilePic
+        model = PictureContainer
         fields = ['images']
 
 
 # form to edit logged in user additional picture1
 class AddPictureForm(forms.ModelForm):
     class Meta:
-        model = ProfilePic
+        model = PictureContainer
         fields = ['images']

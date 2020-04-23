@@ -136,8 +136,8 @@ class Profile(models.Model):
         return self.user.username
 
 
-# Store user's profile picture and set default picture for all user
-class ProfilePic(models.Model):
+# Store user's pictures and set default profile picture for all user
+class PictureContainer(models.Model):
     # keep user's object by linked with UserInfo class
     user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name='image', null=True)
     # keep user's image
@@ -161,8 +161,9 @@ def update_profile_signal(sender, instance, created, **kwargs):
     # save new user's data
     instance.profile.save()
 
-# when object from class ProfilePic is deleted, delete relate file
-@receiver(models.signals.post_delete, sender=ProfilePic)
+
+# when object from class PictureContainer is deleted, delete relate file
+@receiver(models.signals.post_delete, sender=PictureContainer)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     # if instance is images variable
     if instance.images:
@@ -172,14 +173,14 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
             os.remove(instance.images.path)
 
 
-@receiver(models.signals.pre_save, sender=ProfilePic)
+@receiver(models.signals.pre_save, sender=PictureContainer)
 def auto_delete_file_on_change(sender, instance, **kwargs):
     if not instance.pk:
         return False
 
     try:
-        old_file = ProfilePic.objects.get(pk=instance.pk).images
-    except ProfilePic.DoesNotExist:
+        old_file = PictureContainer.objects.get(pk=instance.pk).images
+    except PictureContainer.DoesNotExist:
         return False
 
     new_file = instance.images

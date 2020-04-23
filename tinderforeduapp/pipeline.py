@@ -1,6 +1,6 @@
 # pipeline is custom function use when user logged in with facebook
 
-from .models import UserInfo, ProfilePic
+from .models import UserInfo, PictureContainer
 from django.contrib.auth.models import User
 from social_core.pipeline.user import get_username as social_get_username
 from datetime import datetime
@@ -52,7 +52,7 @@ def user_profile_db(backend, user, response, *args, **kwargs):
                                            lastname=(response.get('name')).split(" ")[1],
                                            gender=gender, fb_link=response.get('link'))
         # assign default profile picture for new user
-        ProfilePic.objects.create(user=user, images='default.png')
+        PictureContainer.objects.create(user=user, images='default.png')
 
 
 # set username for new user by using email account (remove email domain)

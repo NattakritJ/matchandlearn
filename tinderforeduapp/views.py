@@ -49,8 +49,8 @@ def signup(request):
                                                   school_common_name=school_lowercase(user.profile.college),
                                                   age=user.profile.age, firstname=user.profile.first_name,
                                                   lastname=user.profile.last_name, gender=user.profile.gender)
-            # Set user's profile picture to default and link ProfilePic object to user's object
-            ProfilePic.objects.create(user=create_user, images='default.png', is_profile_pic=True)
+            # Set user's profile picture to default and link PictureContainer object to user's object
+            PictureContainer.objects.create(user=create_user, images='default.png', is_profile_pic=True)
             # Save all objects
             create_user.save()
             user.save()
@@ -220,7 +220,7 @@ def homepage(request):
                                                     gender=request.POST['filter'])
             # store list of matched user in dict
             for key in search_filter:
-                user_information_dict[key] = ProfilePic.objects.get(user=key, is_profile_pic=True)
+                user_information_dict[key] = PictureContainer.objects.get(user=key, is_profile_pic=True)
         # if user use type 2
         elif request.POST['filter'] != "":
             # filter UserInfo object using subject and gender
@@ -228,7 +228,7 @@ def homepage(request):
                                                     gender=request.POST['filter'])
             # store list of matched user in dict
             for key in search_filter:
-                user_information_dict[key] = ProfilePic.objects.get(user=key, is_profile_pic=True)
+                user_information_dict[key] = PictureContainer.objects.get(user=key, is_profile_pic=True)
         # if user use type 3
         elif request.POST['location_school'] != "":
             # filter UserInfo object using subject and school
@@ -237,14 +237,14 @@ def homepage(request):
                                                         request.POST['location_school']))
             # store list of matched user in dict
             for key in search_filter:
-                user_information_dict[key] = ProfilePic.objects.get(user=key, is_profile_pic=True)
+                user_information_dict[key] = PictureContainer.objects.get(user=key, is_profile_pic=True)
         # if user use type 4
         else:
             # filter UserInfo object using subject
             search_filter = UserInfo.objects.filter(expertise_subject__subject_common_name=search_keyword)
             # store list of matched user in dict
             for key in search_filter:
-                user_information_dict[key] = ProfilePic.objects.get(user=key, is_profile_pic=True)
+                user_information_dict[key] = PictureContainer.objects.get(user=key, is_profile_pic=True)
         # return search result
         return render(request, 'tinder/home.html',
                       {'user_information_dict': user_information_dict,
@@ -300,7 +300,7 @@ def match(request, user_id):
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get selected user (from searched result) profile picture
-    selected_user_profile_picture = ProfilePic.objects.get(user=user_id, is_profile_pic=True)
+    selected_user_profile_picture = PictureContainer.objects.get(user=user_id, is_profile_pic=True)
     # get selected user (from searched result) comments
     selected_user_comments = Comment.objects.filter(post=request.user.id)
     # get selected user (from searched result) object
@@ -352,7 +352,7 @@ def unmatch(request, user_id):
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get selected user profile picture
-    selected_user_profile_pic = ProfilePic.objects.get(user=user_id, is_profile_pic=True)
+    selected_user_profile_pic = PictureContainer.objects.get(user=user_id, is_profile_pic=True)
     selected_user_object = UserInfo.objects.get(id=user_id)
     # get only active comment
     selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
@@ -395,7 +395,7 @@ def accept_request(request, user_id):
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get selected user's profile picture
-    selected_user_profile_picture = ProfilePic.objects.get(user=user_id, is_profile_pic=True)
+    selected_user_profile_picture = PictureContainer.objects.get(user=user_id, is_profile_pic=True)
     # get selected user's object
     selected_user_object = UserInfo.objects.get(id=user_id)
     # get only active comment
@@ -540,7 +540,7 @@ def edit_profile(request, user_id):
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get logged in user profile picture
-    login_user_profile_picture = ProfilePic.objects.get(user=login_user_object, is_profile_pic=True)
+    login_user_profile_picture = PictureContainer.objects.get(user=login_user_object, is_profile_pic=True)
     # if user send edited value
     if request.method == "POST":
         # edit UserInfo object that linked with edit profile form
