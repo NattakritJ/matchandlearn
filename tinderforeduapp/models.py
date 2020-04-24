@@ -141,15 +141,15 @@ class PictureContainer(models.Model):
     # keep user's object by linked with UserInfo class
     user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name='image', null=True)
     # keep user's image
-    images = models.ImageField(default='default.png', upload_to='media')
+    images = models.ImageField(default='image_holder.png', upload_to='media')
     # flag to tell image is profile picture or not
     is_profile_pic = models.BooleanField(default=False, null=True)
 
     def __str__(self):
         # If object is profile picture
         if self.is_profile_pic is True:
-            return str(self.user) + " (Profile Picture)"
-        return str(self.user)
+            return str(self.user) + " (" + str(self.images) + ")" + " (Profile Picture)"
+        return str(self.user) + " (" + str(self.images) + ")"
 
 
 @receiver(post_save, sender=User)
@@ -171,19 +171,3 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
         if os.path.isfile(instance.images.path):
             # delete it
             os.remove(instance.images.path)
-
-
-@receiver(models.signals.pre_save, sender=PictureContainer)
-def auto_delete_file_on_change(sender, instance, **kwargs):
-    if not instance.pk:
-        return False
-
-    try:
-        old_file = PictureContainer.objects.get(pk=instance.pk).images
-    except PictureContainer.DoesNotExist:
-        return False
-
-    new_file = instance.images
-    if not old_file == new_file:
-        if os.path.isfile(old_file.path):
-            os.remove(old_file.path)

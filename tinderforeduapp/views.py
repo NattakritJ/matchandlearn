@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from .forms import SignUpForm, CommentForm, AdditionalForm, EditProfileForm, ProfilePictureForm, AddPictureForm
 from .models import *
@@ -50,7 +50,7 @@ def signup(request):
                                                   age=user.profile.age, firstname=user.profile.first_name,
                                                   lastname=user.profile.last_name, gender=user.profile.gender)
             # Set user's profile picture to default and link PictureContainer object to user's object
-            PictureContainer.objects.create(user=create_user, images='default.png', is_profile_pic=True)
+            PictureContainer.objects.create(user=create_user, images='image_holder.png', is_profile_pic=True)
             # Save all objects
             create_user.save()
             user.save()
@@ -70,6 +70,19 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'tinder/signup.html', {'form': form})
+
+
+# delete comment that logged in user comment on another user
+def delete_comment(request, user_id):
+    # if receive delete comment POST
+    if request.method == "POST":
+        # get comment id POST
+        comment_id = request.POST['comment_id']
+        # find object of class Comment by id
+        comment_object = Comment.objects.get(id=comment_id)
+        # delete it
+        comment_object.delete()
+    return redirect('{}#comment_section_start'.format(reverse('tinder:matched_profile', args=(user_id,))))
 
 
 # receive confirmation link from email
@@ -299,8 +312,12 @@ def match_request(request, user_id):
 def match(request, user_id):
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
-    # get selected user (from searched result) profile picture
-    selected_user_profile_picture = PictureContainer.objects.get(user=user_id, is_profile_pic=True)
+    # get selected user object
+    selected_user_object = UserInfo.objects.get(id=user_id)
+    # get selected user's profile picture
+    selected_user_profile_picture = selected_user_object.image.filter(is_profile_pic=True)
+    # get selected user's additional picture
+    selected_user_additional_pic = selected_user_object.image.filter(is_profile_pic=False)
     # get selected user (from searched result) comments
     selected_user_comments = Comment.objects.filter(post=request.user.id)
     # get selected user (from searched result) object
@@ -324,6 +341,7 @@ def match(request, user_id):
             return render(request, 'tinder/profile.html',
                           {'already_match': already_match, 'comments': selected_user_comments,
                            'pic': selected_user_profile_picture,
+                           'additional_pic': selected_user_additional_pic,
                            'name': UserInfo.objects.get(name=request.user.username),
                            'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),
                            'test': UserInfo.objects.get(name=request.user.username).match.all(), 'check': 1,
@@ -486,6 +504,7 @@ def matched_profile(request, user_id):
             new_comment.name = request.user.username
             # Save the comment to the database
             new_comment.save()
+            return redirect('{}#comment_section_end'.format(reverse('tinder:matched_profile', args=(user_id,))))
     # send form to template
     else:
         comment_form = CommentForm()
@@ -507,6 +526,7 @@ def matched_profile(request, user_id):
     return render(request, 'tinder/matched_profile.html',
                   {'pic': selected_user_profile_picture, 'additional_pic': additional_pic,
                    'name': UserInfo.objects.get(name=request.user.username),
+                   'username': request.user.username,
                    'profile': UserInfo.objects.get(id=user_id), 'post': selected_user_comment_object,
                    'comments': comments, 'new_comment': new_comment, 'comment_form': comment_form})
 

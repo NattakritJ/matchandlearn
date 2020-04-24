@@ -140,7 +140,7 @@ bg{
             <div class="col-md-4">
                 <div class="thumbnail">
                     <a href="{{ pic.images.url }}" target="_blank">
-                        <img src="{{ pic.images.url }}" style="width:100%">
+                        <img id="pic_{{ forloop.counter }}" src="{{ pic.images.url }}" style="width:100%">
                     </a>
                 </div>
             </div>
@@ -198,35 +198,44 @@ bg{
                 <option value="5">5</option>
             </select></p>
           {% csrf_token %}
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" id="comment_submit_btn" class="btn btn-primary">Submit</button>
         </form>
         {% endif %}
       </div>
     </div>
 </section>
 
-<section class="section-contact section-wrapper gray-bg">
+<section id="comment_section_start" class="section-contact section-wrapper gray-bg">
     <div>
       <h2>Comment</h2>
     </div>
         <div class="row">
             <div class="col-md-12">
                 <h2>{{ comments.count }} comments</h2>
-
-        {% for comment in comments %}
-        <div class="comments" style="padding: 10px;">
-          <p class="font-weight-bold">
-            {{ comment.name }}
-            <span class=" text-muted font-weight-normal">
-              {{ comment.created_on }}
-            </span>
-          </p>
-           Comment : {{ comment.comment }} </br>
-           Star : {{ comment.star }}
-        </div>
-        {% endfor %}
+                {% for comment in comments %}
+                    <div class="section-contact section-wrapper gray-bg">
+                        <div class="comments" style="padding: 10px;">
+                            <p class="font-weight-bold">
+                                {{ comment.name }}
+                                <span class=" text-muted font-weight-normal">
+                                    {{ comment.created_on }}
+                                </span>
+                            </p>
+                            <p id="comment_{{ comment.name }}">Comment : {{ comment.comment }}</p>
+                            <p>Star : {{ comment.star }}</p>
+                            {% if comment.name == username %}
+                                <form action="{% url 'tinder:delete_comment' profile.id %}" method="POST">
+                                {% csrf_token %}
+                                    <input type="hidden" id="comment_id" name="comment_id" value="{{ comment.id }}">
+                                    <input class="btn btn-primary" id="delete_comment_btn_{{ forloop.counter }}" type="submit" value="Delete Comment" />
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
+    <div id="comment_section_end"></div>
     <!--.container-fluid-->
 </section>
 <!--.section-contact-->

@@ -24,7 +24,7 @@ urlpatterns = [
     path('<int:user_id>/students_list/', views.students_list, name="students_list"),
     path('<int:user_id>/matched_profile/', views.matched_profile, name="matched_profile"),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        views.confirmation_email_income, name='activate'),
+        views.confirmation_email_income, name='confirmation_email_income'),
     url(r'^password_reset/$', PasswordResetView.as_view(), name='password_reset'),
     url(r'^password_reset/done/$', PasswordResetDoneView.as_view(), name='password_reset_done'),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
@@ -34,6 +34,7 @@ urlpatterns = [
     path('faq/', TemplateView.as_view(template_name="tinder/faq.html"), name='faq'),
     path('aboutus/', TemplateView.as_view(template_name="tinder/aboutus.html"), name='aboutus'),
     path('fb_data/', views.facebook_additional_data_request, name='fb_data'),
+    path('<int:user_id>/delete_comment/', views.delete_comment, name='delete_comment'),
     path('<int:user_id>/edit_profile/', views.edit_profile, name="edit_profile"),
     path('<int:user_id>/add_image/', views.add_image, name="add_image"),
 ]

@@ -124,7 +124,6 @@ bg{
 </div>
 <!-- .left-col-block -->
 
-
 <div class="right-col-block blocks">
 <div class="theiaStickySidebar">
 
@@ -203,21 +202,23 @@ bg{
         <div class="row">
             <div class="col-md-12">
                 <h2>{{ comments.count }} comments</h2>
-
-        {% for comment in comments %}
-        <div class="comments" style="padding: 10px;">
-          <p class="font-weight-bold">
-            {{ comment.name }}
-            <span class=" text-muted font-weight-normal">
-              {{ comment.created_on }}
-            </span>
-          </p>
-           Comment : {{ comment.comment }} </br>
-           Star : {{ comment.star }}
-        </div>
-        {% endfor %}
+                {% for comment in comments %}
+                    <div class="section-contact section-wrapper gray-bg">
+                        <div class="comments" style="padding: 10px;">
+                            <p class="font-weight-bold">
+                                {{ comment.name }}
+                                <span class=" text-muted font-weight-normal">
+                                    {{ comment.created_on }}
+                                </span>
+                            </p>
+                            <p id="comment_{{ comment.name }}">Comment : {{ comment.comment }}</p>
+                            <p>Star : {{ comment.star }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
+    <div id="comment_section_end"></div>
     <!--.container-fluid-->
 </section>
 <!--.section-contact-->

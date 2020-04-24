@@ -150,7 +150,7 @@ bg{
 </section>
 
 <section class="expertise-wrapper section-wrapper gray-bg">
-    1<div class="container-fluid">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <div>
@@ -204,19 +204,20 @@ bg{
         <div class="row">
             <div class="col-md-12">
                 <h2>{{ comments.count }} comments</h2>
-
-        {% for comment in comments %}
-        <div class="comments" style="padding: 10px;">
-          <p class="font-weight-bold">
-            {{ comment.name }}
-            <span class=" text-muted font-weight-normal">
-              {{ comment.created_on }}
-            </span>
-          </p>
-           Comment : {{ comment.comment }} </br>
-           Star : {{ comment.star }}
-        </div>
-        {% endfor %}
+                {% for comment in comments %}
+                    <div class="section-contact section-wrapper gray-bg">
+                        <div class="comments" style="padding: 10px;">
+                            <p class="font-weight-bold">
+                                {{ comment.name }}
+                                <span class=" text-muted font-weight-normal">
+                                    {{ comment.created_on }}
+                                </span>
+                            </p>
+                            Comment : {{ comment.comment }} </br>
+                            Star : {{ comment.star }}
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     <!--.container-fluid-->
