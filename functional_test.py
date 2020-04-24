@@ -130,6 +130,11 @@ class UploadImageToGallery(unittest.TestCase):
                       "Comment : Nattakrit is a fast learner, "
                       "I taught Math to him and he is understand very fast!")
         time.sleep(2)
+        # He saw that he can't comment on Nattakrit profile anymore
+        block_message = self.browser.find_element_by_id('blocked_comment_msg').text
+        self.assertIn(block_message, "You can't add more comment. If you want to add comment, "
+                                    "please delete your current comment.")
+        time.sleep(2)
         # Nattakrit login to Match and Learn website
         self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
@@ -167,7 +172,7 @@ class UploadImageToGallery(unittest.TestCase):
         tongu20068_profile_btn = self.browser.find_element_by_id('user_tongu20068')
         tongu20068_profile_btn.click()
         time.sleep(2)
-        comment_delete_btn = self.browser.find_element_by_id('delete_comment_btn_3')
+        comment_delete_btn = self.browser.find_element_by_id('delete_comment_btn_2')
         comment_delete_btn.click()
         time.sleep(2)
         # He saw his comment is deleted
@@ -176,7 +181,13 @@ class UploadImageToGallery(unittest.TestCase):
             self.browser.find_element_by_id('comment_tongu19541')
             # If not found, Pass
         except NoSuchElementException:
-            time.sleep(2)
+            pass
+        time.sleep(2)
+        # He saw that he can add comment to Nattakrit again
+        self.browser.find_element_by_id('id_comment')
+        self.browser.find_element_by_id('comment_submit_btn')
+        time.sleep(2)
+
 
 
 if __name__ == '__main__':

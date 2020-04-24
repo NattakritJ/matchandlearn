@@ -490,6 +490,11 @@ def matched_profile(request, user_id):
     selected_user_profile_picture = selected_user_comment_object.image.filter(is_profile_pic=True)
     # get only active comment
     comments = selected_user_comment_object.comments.filter(active=True)
+    # send flag to tell this login user had comment to this selected user
+    block_comment = False
+    for comment in comments:
+        if request.user.username in comment.name:
+            block_comment = True
     additional_pic = selected_user_comment_object.image.filter(is_profile_pic=False)
     new_comment = None
     # if logged in user comment on selected user
@@ -527,6 +532,7 @@ def matched_profile(request, user_id):
                   {'pic': selected_user_profile_picture, 'additional_pic': additional_pic,
                    'name': UserInfo.objects.get(name=request.user.username),
                    'username': request.user.username,
+                   'enable_comment': block_comment,
                    'profile': UserInfo.objects.get(id=user_id), 'post': selected_user_comment_object,
                    'comments': comments, 'new_comment': new_comment, 'comment_form': comment_form})
 
