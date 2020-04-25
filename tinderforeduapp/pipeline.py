@@ -52,7 +52,7 @@ def user_profile_db(backend, user, response, *args, **kwargs):
                                            lastname=(response.get('name')).split(" ")[1],
                                            gender=gender, fb_link=response.get('link'))
         # assign default profile picture for new user
-        PictureContainer.objects.create(user=user, images='default.png')
+        PictureContainer.objects.create(user=user, images='default_profile_image.png')
 
 
 # set username for new user by using email account (remove email domain)

@@ -141,7 +141,7 @@ class PictureContainer(models.Model):
     # keep user's object by linked with UserInfo class
     user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name='image', null=True)
     # keep user's image
-    images = models.ImageField(default='image_holder.png', upload_to='media')
+    images = models.ImageField(default='default_profile_image.png', upload_to='media')
     # flag to tell image is profile picture or not
     is_profile_pic = models.BooleanField(default=False, null=True)
 
