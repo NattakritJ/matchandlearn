@@ -5,7 +5,7 @@ import time
 import unittest
 
 
-class UploadImageToGallery(unittest.TestCase):
+class FunctionalTest(unittest.TestCase):
     def setUp(self):
         self.browser = webdriver.Edge("msedgedriver.exe")
 
@@ -17,7 +17,7 @@ class UploadImageToGallery(unittest.TestCase):
         self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
-        username_box.send_keys('tongu19541')
+        username_box.send_keys('kitsanapong')
         password_box.send_keys("1qaz2wsx3edc4rfv5tgb")
         login_button = self.browser.find_element_by_id('login_btn')
         login_button.click()
@@ -27,8 +27,8 @@ class UploadImageToGallery(unittest.TestCase):
         student_and_tutor_list_btn.click()
         time.sleep(2)
         # He click on Nattakrit profile
-        tongu20068_profile_btn = self.browser.find_element_by_id('user_tongu20068')
-        tongu20068_profile_btn.click()
+        nattakrit_profile_btn = self.browser.find_element_by_id('user_nattakrit')
+        nattakrit_profile_btn.click()
         time.sleep(2)
         # He saw 3 images from Nattakrit profile
         self.browser.find_element_by_id('pic_1')
@@ -39,7 +39,7 @@ class UploadImageToGallery(unittest.TestCase):
         self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
-        username_box.send_keys('tongu20068')
+        username_box.send_keys('nattakrit')
         password_box.send_keys("1qaz2wsx3edc4rfv5tgb")
         login_button = self.browser.find_element_by_id('login_btn')
         login_button.click()
@@ -75,7 +75,7 @@ class UploadImageToGallery(unittest.TestCase):
         self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
-        username_box.send_keys('tongu19541')
+        username_box.send_keys('kitsanapong')
         password_box.send_keys("1qaz2wsx3edc4rfv5tgb")
         login_button = self.browser.find_element_by_id('login_btn')
         login_button.click()
@@ -85,8 +85,8 @@ class UploadImageToGallery(unittest.TestCase):
         student_and_tutor_list_btn.click()
         time.sleep(2)
         # He click on Nattakrit profile
-        tongu20068_profile_btn = self.browser.find_element_by_id('user_tongu20068')
-        tongu20068_profile_btn.click()
+        nattakrit_profile_btn = self.browser.find_element_by_id('user_nattakrit')
+        nattakrit_profile_btn.click()
         time.sleep(2)
         # He saw 3 old images and 1 new image from Nattakrit profile
         self.browser.find_element_by_id('pic_1')
@@ -100,7 +100,7 @@ class UploadImageToGallery(unittest.TestCase):
         self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
-        username_box.send_keys('tongu19541')
+        username_box.send_keys('kitsanapong')
         password_box.send_keys("1qaz2wsx3edc4rfv5tgb")
         login_button = self.browser.find_element_by_id('login_btn')
         login_button.click()
@@ -110,8 +110,8 @@ class UploadImageToGallery(unittest.TestCase):
         student_and_tutor_list_btn.click()
         time.sleep(2)
         # He click on Nattakrit profile
-        tongu20068_profile_btn = self.browser.find_element_by_id('user_tongu20068')
-        tongu20068_profile_btn.click()
+        nattakrit_profile_btn = self.browser.find_element_by_id('user_nattakrit')
+        nattakrit_profile_btn.click()
         time.sleep(2)
         # He type "Nattakrit is a fast learner, I taught Math to him and he is understand very fast!"
         comment_textbox = self.browser.find_element_by_id('id_comment')
@@ -125,21 +125,34 @@ class UploadImageToGallery(unittest.TestCase):
         comment_btn.click()
         time.sleep(2)
         # He saw comment he posted
-        comment_data = self.browser.find_element_by_id('comment_tongu19541').text
+        comment_data = self.browser.find_element_by_id('comment_kitsanapong').text
         self.assertIn(comment_data,
                       "Comment : Nattakrit is a fast learner, "
                       "I taught Math to him and he is understand very fast!")
         time.sleep(2)
-        # He saw that he can't comment on Nattakrit profile anymore
-        block_message = self.browser.find_element_by_id('blocked_comment_msg').text
-        self.assertIn(block_message, "You can't add more comment. If you want to add comment, "
-                                    "please delete your current comment.")
+        # He try to add more comment to Nattakrit profile
+        # He type "Also he taught me Software Development very clear. Recommend!"
+        comment_textbox = self.browser.find_element_by_id('id_comment')
+        comment_textbox.send_keys("Also he taught me Software Development very clear. Recommend!")
+        time.sleep(2)
+        # So, He give Nattakrit 5 star
+        self.browser.find_element_by_xpath("//select[@name='star']/option[text()='5']").click()
+        time.sleep(2)
+        # After all that, He submit comment
+        comment_btn = self.browser.find_element_by_id('comment_submit_btn')
+        comment_btn.click()
+        time.sleep(2)
+        # He saw alert that he can't comment more than one on Nattakrit profile
+        alert = self.browser.switch_to.alert
+        time.sleep(2)
+        # so he accept alert and return to Nattakrit profile
+        alert.accept()
         time.sleep(2)
         # Nattakrit login to Match and Learn website
         self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
-        username_box.send_keys('tongu20068')
+        username_box.send_keys('nattakrit')
         password_box.send_keys("1qaz2wsx3edc4rfv5tgb")
         login_button = self.browser.find_element_by_id('login_btn')
         login_button.click()
@@ -149,7 +162,7 @@ class UploadImageToGallery(unittest.TestCase):
         my_profile_btn.click()
         time.sleep(2)
         # He saw new comment from Kitsanapong
-        comment_data = self.browser.find_element_by_id('comment_tongu19541').text
+        comment_data = self.browser.find_element_by_id('comment_kitsanapong').text
         self.assertIn(comment_data,
                       "Comment : Nattakrit is a fast learner, "
                       "I taught Math to him and he is understand very fast!")
@@ -159,7 +172,7 @@ class UploadImageToGallery(unittest.TestCase):
         self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
-        username_box.send_keys('tongu19541')
+        username_box.send_keys('kitsanapong')
         password_box.send_keys("1qaz2wsx3edc4rfv5tgb")
         login_button = self.browser.find_element_by_id('login_btn')
         login_button.click()
@@ -169,25 +182,35 @@ class UploadImageToGallery(unittest.TestCase):
         student_and_tutor_list_btn.click()
         time.sleep(2)
         # He click on Nattakrit profile
-        tongu20068_profile_btn = self.browser.find_element_by_id('user_tongu20068')
-        tongu20068_profile_btn.click()
+        nattakrit_profile_btn = self.browser.find_element_by_id('user_nattakrit')
+        nattakrit_profile_btn.click()
         time.sleep(2)
-        comment_delete_btn = self.browser.find_element_by_id('delete_comment_btn_2')
+        comment_delete_btn = self.browser.find_element_by_id('delete_comment_btn_kitsanapong')
         comment_delete_btn.click()
         time.sleep(2)
-        # He saw his comment is deleted
-        try:
-            # Find element
-            self.browser.find_element_by_id('comment_tongu19541')
-            # If not found, Pass
-        except NoSuchElementException:
-            pass
+        # He saw his comment is deleted (which mean element is gone)
+        element_gone = len(self.browser.find_elements_by_id('comment_kitsanapong'))
+        self.assertEqual(element_gone, 0)
         time.sleep(2)
-        # He saw that he can add comment to Nattakrit again
+        # Now he can comment to Nattakrit again
         self.browser.find_element_by_id('id_comment')
         self.browser.find_element_by_id('comment_submit_btn')
         time.sleep(2)
-
+        # He type "Nattakrit is a fast learner."
+        comment_textbox = self.browser.find_element_by_id('id_comment')
+        comment_textbox.send_keys("Nattakrit is a fast learner.")
+        time.sleep(2)
+        # So, He give Nattakrit 5 star
+        self.browser.find_element_by_xpath("//select[@name='star']/option[text()='3']").click()
+        time.sleep(2)
+        # After all that, He submit comment
+        comment_btn = self.browser.find_element_by_id('comment_submit_btn')
+        comment_btn.click()
+        time.sleep(2)
+        # He saw comment he posted
+        comment_data = self.browser.find_element_by_id('comment_kitsanapong').text
+        self.assertIn(comment_data, "Comment : Nattakrit is a fast learner.")
+        time.sleep(2)
 
 
 if __name__ == '__main__':
