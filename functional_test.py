@@ -1,6 +1,5 @@
 import os
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 import time
 import unittest
 
@@ -142,11 +141,14 @@ class FunctionalTest(unittest.TestCase):
         comment_btn = self.browser.find_element_by_id('comment_submit_btn')
         comment_btn.click()
         time.sleep(2)
-        # He saw alert that he can't comment more than one on Nattakrit profile
-        alert = self.browser.switch_to.alert
+        # He saw error that he can't comment more than one on Nattakrit profile
+        error_msg = self.browser.find_element_by_id('error_msg').text
+        self.assertIn(error_msg, '''You can't add more comment. If you want to add comment,''' +
+                                 ''' please delete your current comment.''')
         time.sleep(2)
-        # so he accept alert and return to Nattakrit profile
-        alert.accept()
+        # so he accept error by click return button and return to Nattakrit profile
+        error_go_back_btn = self.browser.find_element_by_id('go_back_btn')
+        error_go_back_btn.click()
         time.sleep(2)
         # Nattakrit login to Match and Learn website
         self.browser.get('http://127.0.0.1:8000/login')

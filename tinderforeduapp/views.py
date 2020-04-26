@@ -510,17 +510,15 @@ def create_comment(request, user_id):
     selected_user_object = UserInfo.objects.get(id=user_id)
     # get selected user comment
     selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
-    # get only active comment
-    comments = selected_user_comment_object.comments.filter(active=True)
+    # get comment that commented by logged in user
+    logged_in_user_commented = \
+        len(selected_user_comment_object.comments.filter(active=True, name=request.user.username))
     if request.method == 'POST':
         # check if logged in user try to comment on commented profile
-        for comment in comments:
-            # if found comment by logged in user on selected user's profile
-            if request.user.username in comment.name:
-                # alert logged in user
-                return HttpResponse(
-                    '''<script type="text/javascript">alert("You can't add more comment. If you want''' +
-                    '''to add comment, please delete your current comment.");history.go(-1);</script>''')
+        if logged_in_user_commented != 0:
+            # alert logged in user
+            return render(request, 'tinder/error_logged_in_user_try_to_comment.html',
+                          {'url': get_current_site(request).domain, 'user_id': user_id})
         comment_form = CommentForm(data=request.POST)
         # if form valid
         if comment_form.is_valid():
