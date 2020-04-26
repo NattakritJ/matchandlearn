@@ -72,21 +72,6 @@ def signup(request):
     return render(request, 'tinder/signup.html', {'form': form})
 
 
-# delete comment that logged in user comment on another user
-def delete_comment(request, user_id):
-    # if receive delete comment POST
-    if request.method == "POST":
-        # get comment id POST
-        comment_id = request.POST['comment_id']
-        # find object of class Comment by id
-        comment_object = Comment.objects.get(id=comment_id)
-        # check if selected object is belong to logged in user
-        if comment_object.name == request.user.username:
-            # delete it
-            comment_object.delete()
-    return redirect('{}#comment_section_start'.format(reverse('tinder:matched_profile', args=(user_id,))))
-
-
 # receive confirmation link from email
 def confirmation_email_income(request, uidb64, token):
     # check user's verification by decode base64 to user's id
@@ -488,35 +473,14 @@ def matched_profile(request, user_id):
     selected_user_object = UserInfo.objects.get(id=user_id)
     # get selected user comment
     selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
-    # get selected user profile picture
-    selected_user_profile_picture = selected_user_comment_object.image.filter(is_profile_pic=True)
     # get only active comment
     comments = selected_user_comment_object.comments.filter(active=True)
+    # get selected user profile picture
+    selected_user_profile_picture = selected_user_comment_object.image.filter(is_profile_pic=True)
+    # get selected user additional picture
     additional_pic = selected_user_comment_object.image.filter(is_profile_pic=False)
-    new_comment = None
-    # if logged in user comment on selected user
-    if request.method == 'POST':
-        # check if logged in user try to comment on commented profile
-        for comment in comments:
-            # if found comment by logged in user on selected user's profile
-            if request.user.username in comment.name:
-                # alert logged in user
-                return render(request, 'tinder/no_comment.html',
-                              {'user_id': user_id, 'url': get_current_site(request).domain})
-        comment_form = CommentForm(data=request.POST)
-        # if form valid
-        if comment_form.is_valid():
-            # Create Comment object but don't save to database yet
-            new_comment = comment_form.save(commit=False)
-            # Assign the current post to the comment
-            new_comment.post = selected_user_comment_object
-            new_comment.name = request.user.username
-            # Save the comment to the database
-            new_comment.save()
-            return redirect('{}#comment_section_end'.format(reverse('tinder:matched_profile', args=(user_id,))))
     # send form to template
-    else:
-        comment_form = CommentForm()
+    comment_form = CommentForm()
     # if logged in user decide to unmatch this selected user
     if request.POST.get('unmatch'):
         # get logged in user object
@@ -537,7 +501,52 @@ def matched_profile(request, user_id):
                    'name': UserInfo.objects.get(name=request.user.username),
                    'username': request.user.username,
                    'profile': UserInfo.objects.get(id=user_id), 'post': selected_user_comment_object,
-                   'comments': comments, 'new_comment': new_comment, 'comment_form': comment_form})
+                   'comments': comments, 'comment_form': comment_form})
+
+
+# create comment object when logged in user comment to selected user
+def create_comment(request, user_id):
+    # get selected user object
+    selected_user_object = UserInfo.objects.get(id=user_id)
+    # get selected user comment
+    selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
+    # get only active comment
+    comments = selected_user_comment_object.comments.filter(active=True)
+    if request.method == 'POST':
+        # check if logged in user try to comment on commented profile
+        for comment in comments:
+            # if found comment by logged in user on selected user's profile
+            if request.user.username in comment.name:
+                # alert logged in user
+                return HttpResponse(
+                    '''<script type="text/javascript">alert("You can't add more comment. If you want''' +
+                    '''to add comment, please delete your current comment.");history.go(-1);</script>''')
+        comment_form = CommentForm(data=request.POST)
+        # if form valid
+        if comment_form.is_valid():
+            # Create Comment object but don't save to database yet
+            new_comment = comment_form.save(commit=False)
+            # Assign the current post to the comment
+            new_comment.post = selected_user_comment_object
+            new_comment.name = request.user.username
+            # Save the comment to the database
+            new_comment.save()
+            return redirect('{}#comment_section_end'.format(reverse('tinder:matched_profile', args=(user_id,))))
+
+
+# delete comment that logged in user comment on another user
+def delete_comment(request, user_id):
+    # if receive delete comment POST
+    if request.method == "POST":
+        # get comment id POST
+        comment_id = request.POST['comment_id']
+        # find object of class Comment by id
+        comment_object = Comment.objects.get(id=comment_id)
+        # check if selected object is belong to logged in user
+        if comment_object.name == request.user.username:
+            # delete it
+            comment_object.delete()
+    return redirect('{}#comment_section_start'.format(reverse('tinder:matched_profile', args=(user_id,))))
 
 
 # Add new image to user's gallery

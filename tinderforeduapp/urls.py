@@ -34,6 +34,7 @@ urlpatterns = [
     path('faq/', TemplateView.as_view(template_name="tinder/faq.html"), name='faq'),
     path('aboutus/', TemplateView.as_view(template_name="tinder/aboutus.html"), name='aboutus'),
     path('fb_data/', views.facebook_additional_data_request, name='fb_data'),
+    path('<int:user_id>/create_comment/', views.create_comment, name='create_comment'),
     path('<int:user_id>/delete_comment/', views.delete_comment, name='delete_comment'),
     path('<int:user_id>/edit_profile/', views.edit_profile, name="edit_profile"),
     path('<int:user_id>/add_image/', views.add_image, name="add_image"),

@@ -200,7 +200,7 @@ class FunctionalTest(unittest.TestCase):
         comment_textbox = self.browser.find_element_by_id('id_comment')
         comment_textbox.send_keys("Nattakrit is a fast learner.")
         time.sleep(2)
-        # So, He give Nattakrit 5 star
+        # So, He give Nattakrit 3 star
         self.browser.find_element_by_xpath("//select[@name='star']/option[text()='3']").click()
         time.sleep(2)
         # After all that, He submit comment
