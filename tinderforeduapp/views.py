@@ -511,8 +511,9 @@ def create_comment(request, user_id):
     # get selected user comment
     selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
     # get comment that commented by logged in user
-    logged_in_user_commented = \
-        len(selected_user_comment_object.comments.filter(active=True, name=request.user.username))
+    if request.user.is_authenticated:
+        logged_in_user_commented = \
+            len(selected_user_comment_object.comments.filter(active=True, name=request.user.username))
     if request.method == 'POST':
         # if found comment object that created by logged in user
         if logged_in_user_commented != 0:
