@@ -95,6 +95,9 @@ def confirmation_email_income(request, uidb64, token):
 
 # show logged in user's profile page
 def my_profile(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get logged in user's UserInfo object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get only active comment
@@ -133,6 +136,9 @@ def login_redirect(request):
 
 # show another profile (not logged in user's profile) that clicked on search result
 def searched_profile(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get searched user's object
     selected_user_object = get_object_or_404(UserInfo, id=user_id)
     # get searched user's profile picture
@@ -173,6 +179,9 @@ def searched_profile(request, user_id):
 
 # when new user use continue with facebook for the first time, site request additional data (school)
 def facebook_additional_data_request(request):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     if request.method == "POST":
         form = AdditionalForm(request.POST)
         if form.is_valid():
@@ -191,13 +200,13 @@ def facebook_additional_data_request(request):
 
 # homepage and search function on homepage
 def homepage(request):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # create list of search result
     search_filter = []
     # flag for check that logged in user is search or not
     form_submit_flag = 0
-    # if user go to homepage without login, redirect to login page
-    if UserInfo.objects.filter(name=request.user.username).count() == 0:
-        return HttpResponseRedirect('/login')
     # if user register with facebook, redirect user to add school data
     if UserInfo.objects.get(name=request.user.username).school == '':
         return HttpResponseRedirect('/fb_data')
@@ -259,6 +268,9 @@ def homepage(request):
 
 # delete logged in user's expertise subject
 def delete_subject(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get logged in user's id
     login_user_id = UserInfo.objects.get(id=user_id)
     check_object_exist = get_object_or_404(UserInfo, id=user_id)
@@ -277,6 +289,9 @@ def delete_subject(request, user_id):
 
 # show list of match request that sent to logged in user
 def match_request(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get all match request on logged in user's RequestSender model
     login_user_all_match_request = UserInfo.objects.get(name=request.user.username).request.all()
     # list to store user that sent match request to logged in user
@@ -297,6 +312,9 @@ def match_request(request, user_id):
 
 # match request sender
 def match(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get selected user object
@@ -354,6 +372,9 @@ def match(request, user_id):
 
 # remove match between two user
 def unmatch(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get selected user profile picture
@@ -397,6 +418,9 @@ def unmatch(request, user_id):
 
 # accept request sent from another user
 def accept_request(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get selected user's profile picture
@@ -448,6 +472,9 @@ def accept_request(request, user_id):
 
 # show all student and tutor matched list on logged in user
 def students_list(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get logged in user matched list
     match_list = UserInfo.objects.get(name=request.user.username).match.all()
     # create match list dict to store matched user's object
@@ -469,6 +496,9 @@ def students_list(request, user_id):
 
 # view profile of matched user (by clicking user from Students and Tutor list page)
 def matched_profile(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get selected user object
     selected_user_object = UserInfo.objects.get(id=user_id)
     # get selected user comment
@@ -514,14 +544,16 @@ def matched_profile(request, user_id):
 
 # create comment object when logged in user comment to selected user
 def create_comment(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get selected user object
     selected_user_object = UserInfo.objects.get(id=user_id)
     # get selected user comment
     selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
     # get comment that commented by logged in user
-    if request.user.is_authenticated:
-        logged_in_user_commented = \
-            len(selected_user_comment_object.comments.filter(active=True, name=request.user.username))
+    logged_in_user_commented = \
+        len(selected_user_comment_object.comments.filter(active=True, name=request.user.username))
     if request.method == 'POST':
         # if found comment object that created by logged in user
         if logged_in_user_commented != 0:
@@ -543,6 +575,9 @@ def create_comment(request, user_id):
 
 # delete comment that logged in user comment on another user
 def delete_comment(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # if receive delete comment POST
     if request.method == "POST":
         # get comment id POST
@@ -558,6 +593,9 @@ def delete_comment(request, user_id):
 
 # Add new image to user's gallery
 def add_image(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # if user send add image form
@@ -582,6 +620,9 @@ def add_image(request, user_id):
 
 # edit logged in user profile
 def edit_profile(request, user_id):
+    # if someone send request without login, redirect to login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
     # get logged in user profile picture
