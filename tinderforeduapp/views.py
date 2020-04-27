@@ -514,7 +514,7 @@ def create_comment(request, user_id):
     logged_in_user_commented = \
         len(selected_user_comment_object.comments.filter(active=True, name=request.user.username))
     if request.method == 'POST':
-        # check if logged in user try to comment on commented profile
+        # if found comment object that created by logged in user
         if logged_in_user_commented != 0:
             # alert logged in user
             return render(request, 'tinder/error_logged_in_user_try_to_comment.html',
