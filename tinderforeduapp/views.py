@@ -480,7 +480,14 @@ def matched_profile(request, user_id):
     # get selected user additional picture
     additional_pic = selected_user_comment_object.image.filter(is_profile_pic=False)
     # send form to template
-    comment_form = CommentForm()
+    if request.user.is_authenticated:
+        logged_in_user_commented = \
+            len(selected_user_comment_object.comments.filter(active=True, name=request.user.username))
+    if logged_in_user_commented != 0:
+        # Don't send form to template
+        comment_form = False
+    else:
+        comment_form = True
     # if logged in user decide to unmatch this selected user
     if request.POST.get('unmatch'):
         # get logged in user object
