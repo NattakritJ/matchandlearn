@@ -11,7 +11,7 @@ class FunctionalTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def another_user_can_see_images_and_new_image_when_user_add_new_image(self):
+    def test_another_user_can_see_images_and_new_image_when_user_add_new_image(self):
         # Kitsanapong login to Match and Learn website
         self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
@@ -34,8 +34,14 @@ class FunctionalTest(unittest.TestCase):
         self.browser.find_element_by_id('pic_2')
         self.browser.find_element_by_id('pic_3')
         time.sleep(2)
+        # He logout from Match and Learn
+        logout_btn = self.browser.find_element_by_id('logout_btn')
+        logout_btn.click()
+        # He see login page, which means he's successfully logout from Match and Learn
+        signup_link = self.browser.find_element_by_id('signup_link').text
+        self.assertIn(signup_link, "New to Match and Learn? Sign up now!")
+        time.sleep(2)
         # Nattakrit login to Match and Learn website
-        self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
         username_box.send_keys('nattakrit')
@@ -70,8 +76,14 @@ class FunctionalTest(unittest.TestCase):
         self.browser.find_element_by_id('pic_3')
         self.browser.find_element_by_id('pic_4')
         time.sleep(2)
+        # He logout from Match and Learn
+        logout_btn = self.browser.find_element_by_id('logout_btn')
+        logout_btn.click()
+        # He see login page, which means he's successfully logout from Match and Learn
+        signup_link = self.browser.find_element_by_id('signup_link').text
+        self.assertIn(signup_link, "New to Match and Learn? Sign up now!")
+        time.sleep(2)
         # Kitsanapong login to Match and Learn website
-        self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
         username_box.send_keys('kitsanapong')
@@ -94,7 +106,7 @@ class FunctionalTest(unittest.TestCase):
         self.browser.find_element_by_id('pic_4')
         time.sleep(2)
 
-    def test_user_can_comment_and_delete_comment_on_another_profile(self):
+    def user_can_comment_and_delete_comment_on_another_profile(self):
         # Kitsanapong login to Match and Learn website
         self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
@@ -129,29 +141,17 @@ class FunctionalTest(unittest.TestCase):
                       "Comment : Nattakrit is a fast learner, "
                       "I taught Math to him and he is understand very fast!")
         time.sleep(2)
-        # He try to add more comment to Nattakrit profile
-        # He type "Also he taught me Software Development very clear. Recommend!"
-        comment_textbox = self.browser.find_element_by_id('id_comment')
-        comment_textbox.send_keys("Also he taught me Software Development very clear. Recommend!")
-        time.sleep(2)
-        # So, He give Nattakrit 5 star
-        self.browser.find_element_by_xpath("//select[@name='star']/option[text()='5']").click()
-        time.sleep(2)
-        # After all that, He submit comment
-        comment_btn = self.browser.find_element_by_id('comment_submit_btn')
-        comment_btn.click()
-        time.sleep(2)
-        # He saw error that he can't comment more than one on Nattakrit profile
-        error_msg = self.browser.find_element_by_id('error_msg').text
-        self.assertIn(error_msg, '''You can't add more comment. If you want to add comment,''' +
-                                 ''' please delete your current comment.''')
-        time.sleep(2)
-        # so he accept error by click return button and return to Nattakrit profile
-        error_go_back_btn = self.browser.find_element_by_id('go_back_btn')
-        error_go_back_btn.click()
+        # He try to add more comment to Nattakrit profile but comment section is gone
+        comment_element_gone = len(self.browser.find_elements_by_id('id_comment'))
+        self.assertEqual(comment_element_gone, 0)
+        # He logout from Match and Learn
+        logout_btn = self.browser.find_element_by_id('logout_btn')
+        logout_btn.click()
+        # He see login page, which means he's successfully logout from Match and Learn
+        signup_link = self.browser.find_element_by_id('signup_link').text
+        self.assertIn(signup_link, "New to Match and Learn? Sign up now!")
         time.sleep(2)
         # Nattakrit login to Match and Learn website
-        self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
         username_box.send_keys('nattakrit')
@@ -169,9 +169,15 @@ class FunctionalTest(unittest.TestCase):
                       "Comment : Nattakrit is a fast learner, "
                       "I taught Math to him and he is understand very fast!")
         time.sleep(2)
+        # He logout from Match and Learn
+        logout_btn = self.browser.find_element_by_id('logout_btn')
+        logout_btn.click()
+        # He see login page, which means he's successfully logout from Match and Learn
+        signup_link = self.browser.find_element_by_id('signup_link').text
+        self.assertIn(signup_link, "New to Match and Learn? Sign up now!")
+        time.sleep(2)
         # Kitsanapong think he's over compliment so
         # he login to Match and Learn website and delete his comment
-        self.browser.get('http://127.0.0.1:8000/login')
         username_box = self.browser.find_element_by_id('id_username')
         password_box = self.browser.find_element_by_id('id_password')
         username_box.send_keys('kitsanapong')

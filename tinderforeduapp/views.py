@@ -513,10 +513,10 @@ def matched_profile(request, user_id):
     logged_in_user_commented = \
         len(selected_user_comment_object.comments.filter(active=True, name=request.user.username))
     if logged_in_user_commented != 0:
-        # Don't send form to template
+        # Send flag to tell template to hide comment form
         comment_form = False
     else:
-        # send form to template
+        # Send flag to tell template to show comment form
         comment_form = True
     # if logged in user decide to unmatch this selected user
     if request.POST.get('unmatch'):
