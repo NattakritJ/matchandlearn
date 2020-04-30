@@ -88,7 +88,7 @@ bg{
     <li><a name = "Privacy Policy" href="{% url 'tinder:privacy' %}">Privacy Policy</a></li>
     <li style="float:right"><a id="logout_btn" href="{% url 'tinder:logout' %}">Logout</a></li>
     <li style="float:right"><a href="{% url 'tinder:faq' %}">Help</a></li>
-    <li style="float:right"><a href="/{{ name.id }}/my_profile">Profile : {{ user.first_name }}</a></li>
+    <li style="float:right"><a href="/my_profile">Profile : {{ user.first_name }}</a></li>
 </ul>
 <body id="page-top" data-spy="scroll" data-target=".navbar">
 <div id="main-wrapper">
@@ -115,7 +115,7 @@ bg{
                 <p id="school_id">school: {{name.school }}</p>
                 <p id ="gender">gender: {{ name.gender }}</p>
             </div>
-            <form action="{% url 'tinder:edit_profile' name.id %}">
+            <form action="{% url 'tinder:edit_profile' %}">
             <input class="btn btn-primary" type="submit" value="Edit profile" />
             </form>
         </div>
@@ -152,7 +152,7 @@ bg{
             </div>
             {% endfor %}
         </div>
-        <form action="{% url 'tinder:add_image' name.id %}">
+        <form action="{% url 'tinder:add_image' %}">
             <input class="btn btn-primary" id="add_img_btn" type="submit" value="Add image" />
             </form>
     </div>
@@ -172,7 +172,7 @@ bg{
             <div class="col-md-6">
                 <div class="expertise-item">
                     <table id="good_subject_table">
-    <form action="{% url 'tinder:delete_subject' name.id %}" method="post">
+    <form action="{% url 'tinder:delete_subject' %}" method="post">
     {% for subject_name in subject.all %}
         <tr><td><input type="checkbox" name="subject_list" id="subject_name:{{ forloop.counter }}" value="{{ subject_name.id }}"><label id="subject_{{ subject_name }}" for="subject_name{{ forloop.counter }}">{{ forloop.counter }}: {{ subject_name }}</label></td></tr><p></p>
     {% endfor %}

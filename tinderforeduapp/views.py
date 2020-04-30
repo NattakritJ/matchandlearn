@@ -95,7 +95,7 @@ def confirmation_email_income(request, uidb64, token):
 
 
 # show logged in user's profile page
-def my_profile(request, user_id):
+def my_profile(request):
     # if someone send request without login, redirect to login page
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login')
@@ -120,11 +120,11 @@ def my_profile(request, user_id):
         return render(request, 'tinder/my_profile.html',
                       {'comments': comments, 'pic': login_user_profile_picture,
                        'additional_pic': additional_pic,
-                       'name': UserInfo.objects.get(id=user_id),
+                       'name': UserInfo.objects.get(name=request.user.username),
                        'subject': UserInfo.objects.get(name=request.user.username).expertise_subject.all()})
     return render(request, 'tinder/my_profile.html',
                   {'comments': comments, 'pic': login_user_profile_picture,
-                   'additional_pic': additional_pic, 'name': UserInfo.objects.get(id=user_id),
+                   'additional_pic': additional_pic, 'name': UserInfo.objects.get(name=request.user.username),
                    'subject': UserInfo.objects.get(name=request.user.username).expertise_subject.all(),
                    'test': UserInfo.objects.get(name=request.user.username).match.all()})
 
@@ -268,13 +268,12 @@ def homepage(request):
 
 
 # delete logged in user's expertise subject
-def delete_subject(request, user_id):
+def delete_subject(request):
     # if someone send request without login, redirect to login page
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login')
-    # get logged in user's id
-    login_user_id = UserInfo.objects.get(id=user_id)
-    check_object_exist = get_object_or_404(UserInfo, id=user_id)
+    # get logged in user's object
+    check_object_exist = get_object_or_404(UserInfo, name=request.user.username)
     # get list of subjects select to delete
     list_subject = request.POST.getlist("subject_list")
     if len(list_subject) == 0:
@@ -285,7 +284,7 @@ def delete_subject(request, user_id):
             # delete subject that link to user
             select = check_object_exist.expertise_subject.get(pk=subject)
             select.delete()
-    return HttpResponseRedirect(reverse('tinder:my_profile', args=(login_user_id.id,)))
+    return HttpResponseRedirect(reverse('tinder:my_profile'))
 
 
 # show list of match request that sent to logged in user
@@ -547,7 +546,7 @@ def delete_comment(request, user_id):
 
 
 # Add new image to user's gallery
-def add_image(request, user_id):
+def add_image(request):
     # if someone send request without login, redirect to login page
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login')
@@ -566,7 +565,7 @@ def add_image(request, user_id):
             new_image.is_profile_pic = False
             # save all value
             new_image.save()
-            return HttpResponseRedirect(reverse('tinder:my_profile', args=(user_id,)))
+            return HttpResponseRedirect(reverse('tinder:my_profile'))
     # send form to template
     else:
         add_picture_form = ProfilePictureForm()
@@ -574,7 +573,7 @@ def add_image(request, user_id):
 
 
 # edit logged in user profile
-def edit_profile(request, user_id):
+def edit_profile(request):
     # if someone send request without login, redirect to login page
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login')
@@ -593,7 +592,7 @@ def edit_profile(request, user_id):
             # save all value
             form.save()
             picture_edit_form.save()
-            return HttpResponseRedirect(reverse('tinder:my_profile', args=(user_id,)))
+            return HttpResponseRedirect(reverse('tinder:my_profile'))
     # send form to template
     else:
         form = EditProfileForm(instance=login_user_object)

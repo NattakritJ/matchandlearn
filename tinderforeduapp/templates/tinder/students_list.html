@@ -110,7 +110,7 @@ bg{
     <li><a name = "Privacy Policy" href="{% url 'tinder:privacy' %}">Privacy Policy</a></li>
     <li style="float:right"><a id="logout_btn" href="{% url 'tinder:logout' %}">Logout</a></li>
     <li style="float:right"><a href="{% url 'tinder:faq' %}">Help</a></li>
-    <li style="float:right"><a href="/{{ name.id }}/my_profile">Profile : {{ user.first_name }}</a></li>
+    <li style="float:right"><a href="/my_profile">Profile : {{ user.first_name }}</a></li>
 </ul>
 
 <body>
