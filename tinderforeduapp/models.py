@@ -167,6 +167,8 @@ def update_profile_signal(sender, instance, created, **kwargs):
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     # if instance is images variable
     if instance.images:
+        if str(instance.images) == 'media/default_profile_image.png':
+            return
         # get file path from images variable
         if os.path.isfile(instance.images.path):
             # delete it

@@ -50,7 +50,8 @@ def signup(request):
                                                   age=user.profile.age, firstname=user.profile.first_name,
                                                   lastname=user.profile.last_name, gender=user.profile.gender)
             # Set user's profile picture to default and link PictureContainer object to user's object
-            PictureContainer.objects.create(user=create_user, images='default_profile_image.png', is_profile_pic=True)
+            PictureContainer.objects.create(user=create_user, images='media/default_profile_image.png',
+                                            is_profile_pic=True)
             # Save all objects
             create_user.save()
             user.save()
