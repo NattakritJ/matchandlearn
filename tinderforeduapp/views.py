@@ -212,39 +212,39 @@ def homepage(request):
     if UserInfo.objects.get(name=request.user.username).school == '':
         return HttpResponseRedirect('/fb_data')
     # if user send subject_find POST form (search function)
-    if request.POST.get('subject_find'):
+    if request.GET.get('subject_find'):
         # send flag to template that user use search function
         form_submit_flag = 1
         # store key of search result to dict
         user_information_dict = {}
         # convert search subject input to lowercase
-        search_keyword = search_lowercase(request.POST['subject_find'])
+        search_keyword = search_lowercase(request.GET['subject_find'])
         # search have 4 types. 1.search with gender and school. 2.search with gender only. 3.search with school only
         # 4.search with subject only.
         # if user use type 1
-        if request.POST['filter'] != "" and request.POST['location_school'] != " ":
+        if request.GET['filter'] != "" and request.GET['location_school'] != " ":
             # filter UserInfo object using subject, gender and school
             search_filter = UserInfo.objects.filter(expertise_subject__subject_common_name=search_keyword,
                                                     school_common_name=school_lowercase(
-                                                        request.POST['location_school']),
-                                                    gender=request.POST['filter'])
+                                                        request.GET['location_school']),
+                                                    gender=request.GET['filter'])
             # store list of matched user in dict
             for key in search_filter:
                 user_information_dict[key] = PictureContainer.objects.get(user=key, is_profile_pic=True)
         # if user use type 2
-        elif request.POST['filter'] != "":
+        elif request.GET['filter'] != "":
             # filter UserInfo object using subject and gender
             search_filter = UserInfo.objects.filter(expertise_subject__subject_common_name=search_keyword,
-                                                    gender=request.POST['filter'])
+                                                    gender=request.GET['filter'])
             # store list of matched user in dict
             for key in search_filter:
                 user_information_dict[key] = PictureContainer.objects.get(user=key, is_profile_pic=True)
         # if user use type 3
-        elif request.POST['location_school'] != "":
+        elif request.GET['location_school'] != "":
             # filter UserInfo object using subject and school
             search_filter = UserInfo.objects.filter(expertise_subject__subject_common_name=search_keyword,
                                                     school_common_name=school_lowercase(
-                                                        request.POST['location_school']))
+                                                        request.GET['location_school']))
             # store list of matched user in dict
             for key in search_filter:
                 user_information_dict[key] = PictureContainer.objects.get(user=key, is_profile_pic=True)
@@ -259,11 +259,11 @@ def homepage(request):
         return render(request, 'tinder/home.html',
                       {'user_information_dict': user_information_dict,
                        'name': UserInfo.objects.get(name=request.user.username),
-                       "search_result": search_filter, "search_size": len(search_filter), 'sendPOST': form_submit_flag,
-                       "what_sub": request.POST['subject_find']})
+                       "search_result": search_filter, "search_size": len(search_filter), 'sendGET': form_submit_flag,
+                       "what_sub": request.GET['subject_find']})
     return render(request, 'tinder/home.html',
                   {'name': UserInfo.objects.get(name=request.user.username), "search_size": len(search_filter),
-                   'sendPOST': form_submit_flag,
+                   'sendGET': form_submit_flag,
                    'test': UserInfo.objects.get(name=request.user.username).request.all()})
 
 
