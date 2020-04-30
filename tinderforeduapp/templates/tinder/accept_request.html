@@ -82,8 +82,8 @@ bg{
 </head>
 <ul>
   <li><a href="/">Home</a></li>
-  <li><a name = "Students and Tutor list" href="{% url 'tinder:students_list' name.id%}">Students and Tutor list</a></li>
-    <li ><a name = "Match request" href="{% url 'tinder:match_request' name.id %}" {% if name.match_request > 0 %}class="notification"{% endif %}><span>Student request</span>{% if name.match_request > 0 %}<span name= "value_notificate" class="badge">{{ name.match_request }}</span>{% endif %}</a></li>
+  <li><a name = "Students and Tutor list" href="{% url 'tinder:students_list' %}">Students and Tutor list</a></li>
+    <li ><a name = "Match request" href="{% url 'tinder:match_request' %}" {% if name.match_request > 0 %}class="notification"{% endif %}><span>Student request</span>{% if name.match_request > 0 %}<span name= "value_notificate" class="badge">{{ name.match_request }}</span>{% endif %}</a></li>
     <li><a name = "About us" href="{% url 'tinder:aboutus' %}">About</a></li>
     <li><a name = "Chat" href="">Chat</a></li>
     <li><a name = "Privacy Policy" href="{% url 'tinder:privacy' %}">Privacy Policy</a></li>
@@ -122,6 +122,37 @@ bg{
 
 <div class="right-col-block blocks">
 <div class="theiaStickySidebar">
+
+<section class="expertise-wrapper section-wrapper gray-bg">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div>
+                    <h2>{{ profile.firstname }}'s Gallery</h2>
+                    {% if additional_pic %}
+                    {% else %}
+                    <h3>{{ profile.firstname }} doesn't have image in gallery</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- .row -->
+        <div class="row">
+        {% if additional_pic %}
+        {% for pic in additional_pic %}
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <a href="{{ pic.images.url }}" target="_blank">
+                        <img id="pic_{{ forloop.counter }}" src="{{ pic.images.url }}" style="width:100%">
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        </div>
+    </div>
+</section>
+
 <section class="expertise-wrapper section-wrapper gray-bg">
     <div class="container-fluid">
         <div class="row">
@@ -148,28 +179,30 @@ bg{
     </div>
 </section>
 
-<section class="section-contact section-wrapper gray-bg">
+<section id="comment_section_start" class="section-contact section-wrapper gray-bg">
     <div>
       <h2>Comment</h2>
     </div>
         <div class="row">
             <div class="col-md-12">
                 <h2>{{ comments.count }} comments</h2>
-
-        {% for comment in comments %}
-        <div class="comments" style="padding: 10px;">
-          <p class="font-weight-bold">
-            {{ comment.name }}
-            <span class=" text-muted font-weight-normal">
-              {{ comment.created_on }}
-            </span>
-          </p>
-           Comment : {{ comment.comment }} </br>
-           Star : {{ comment.star }}
-        </div>
-        {% endfor %}
+                {% for comment in comments %}
+                    <div class="section-contact section-wrapper gray-bg">
+                        <div class="comments" style="padding: 10px;">
+                            <p class="font-weight-bold">
+                                {{ comment.name }}
+                                <span class=" text-muted font-weight-normal">
+                                    {{ comment.created_on }}
+                                </span>
+                            </p>
+                            <p id="comment_{{ comment.name }}">Comment : {{ comment.comment }}</p>
+                            <p>Star : {{ comment.star }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
+    <div id="comment_section_end"></div>
     <!--.container-fluid-->
 </section>
 <!--.section-contact-->
