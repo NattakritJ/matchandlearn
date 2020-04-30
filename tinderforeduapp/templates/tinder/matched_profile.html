@@ -170,7 +170,7 @@ bg{
                 <div class="expertise-item">
                     <form action="{% url 'tinder:matched_profile' profile.id %}" method="post">
                     {% csrf_token %}
-                    <button class="btn btn-primary" name="unmatch" value="unmatch" >unmatched</button>
+                    <button class="btn btn-primary" id="unmatched_btn" name="unmatch" value="unmatch" >unmatched</button>
                     </form>
                 </div>
             </div>

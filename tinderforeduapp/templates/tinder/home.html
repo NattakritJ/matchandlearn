@@ -52,7 +52,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link link text-white display-4" name = "Match request" href="{% url 'tinder:match_request' %}" {% if name.match_request > 0 %}class="notification"{% endif %}><span>Student request</span>{% if name.match_request > 0 %}<span name= "value_notificate" class="badge">{{ name.match_request }}</span>{% endif %}</a>
+                    <a id="student_request" class="nav-link link text-white display-4" name = "Match request" href="{% url 'tinder:match_request' %}" {% if name.match_request > 0 %}class="notification"{% endif %}><span>Student request</span>{% if name.match_request > 0 %}<span id="notification_alert" name= "value_notificate" class="badge">{{ name.match_request }}</span>{% endif %}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link link text-white display-4" href="{% url 'tinder:aboutus' %}">
@@ -109,7 +109,7 @@
                                 </select>
                                 </div>
                                 <div class="col-md-12 input-group-btn">
-                                    <button type="submit" class="btn btn-secondary btn-form display-4">Search</button>
+                                    <button type="submit" id="search_submit_btn" class="btn btn-secondary btn-form display-4">Search</button>
                                 </div>
                             </div>
                         </form><!---Formbuilder Form--->
@@ -133,14 +133,13 @@
           <div class="row media-row">
             {% for key,value in user_information_dict.items %}
               <div class="team-item col-lg-3 col-md-6">
-                  <a href="/{{ key.id }}/profile">
+                  <a id="result_{{ key.name }}" href="/{{ key.id }}/profile">
                 <div class="item-image">
                     <img src="{{ value.images.url }}">
                 </div>
                 <div class="item-caption py-3">
                     <div class="item-name px-2">
-                        <p class="mbr-fonts-style display-5">
-                            {{ key.firstname }} {{ key.lastname }}</p>
+                        <p id="name_{{ key.name }}" class="mbr-fonts-style display-5">{{ key.firstname }} {{ key.lastname }}</p>
                     </div>
                 </div>
                       </a>

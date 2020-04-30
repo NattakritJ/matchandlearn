@@ -170,8 +170,8 @@ bg{
                 <div class="expertise-item">
                     <form action="{% url 'tinder:accept_request' profile.id %}" method="post">
                         {% csrf_token %}
-                        <button class="btn btn-primary" name="accept" value="accept" >accept</button>
-                        <button class="btn btn-primary" name="decline" value="decline" >decline</button>
+                        <button class="btn btn-primary" id="accept_btn" name="accept" value="accept" >accept</button>
+                        <button class="btn btn-primary" id="decline_btn" name="decline" value="decline" >decline</button>
                     </form>
                 </div>
             </div>

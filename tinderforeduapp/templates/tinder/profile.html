@@ -163,7 +163,7 @@ bg{
                     {% if not match_send %}
                     <h2>Do you want to match this person?</h2>
                     {% else %}
-                    <h2>Want to change your mind?</h2>
+                    <h2 id="change_match">Want to change your mind?</h2>
                     {% endif %}
                 </div>
             </div>
@@ -185,7 +185,7 @@ bg{
                         {% csrf_token %}
                         <label for="text_request">Tell something about yourself</label>
                         <input class="form-control" id ="text_request" name="text_request" type="text" row="4" cols="100" ><p></p>
-                        <button class="btn btn-primary"  name="match" value="match" >Match</button>
+                        <button class="btn btn-primary" id="match_btn" name="match" value="match" >Match</button>
                     </form>
                     {% endif %}
                 {% endif %}
