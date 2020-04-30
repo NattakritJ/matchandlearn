@@ -164,7 +164,7 @@ def searched_profile(request, user_id):
     if selected_user_object.request.filter(request_sender=login_user_object.name).exists():
         # send flag match_send to template to change match request button to unsent request button
         return render(request, 'tinder/profile.html',
-                      {'comments': comments, 'pic': selected_user_profile_picture,
+                      {'comments': comments, 'pic': selected_user_profile_picture, 'additional_pic': additional_pic,
                        'name': UserInfo.objects.get(name=request.user.username),
                        'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),
                        'test': UserInfo.objects.get(
@@ -288,7 +288,7 @@ def delete_subject(request, user_id):
 
 
 # show list of match request that sent to logged in user
-def match_request(request, user_id):
+def match_request(request):
     # if someone send request without login, redirect to login page
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login')
@@ -317,40 +317,16 @@ def match(request, user_id):
         return HttpResponseRedirect('/login')
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
-    # get selected user object
-    selected_user_object = UserInfo.objects.get(id=user_id)
-    # get selected user's profile picture
-    selected_user_profile_picture = selected_user_object.image.filter(is_profile_pic=True)
-    # get selected user's additional picture
-    selected_user_additional_pic = selected_user_object.image.filter(is_profile_pic=False)
-    # get selected user (from searched result) comments
-    selected_user_comments = Comment.objects.filter(post=request.user.id)
     # get selected user (from searched result) object
     selected_user_object = UserInfo.objects.get(id=user_id)
-    # get logged in user and selected user username
-    chat_room_username = [login_user_object.name, selected_user_object.name]
-    # sort two username by alphabet
-    chat_sort_username = sorted(chat_room_username)
-    # create string with sorted username format (user1_user2)
-    chat_url = chat_sort_username[0] + "_" + chat_sort_username[1]
     # create match flag to check if user was sent match request or not
-    already_match = 0
     if request.method == "POST":
         # if user was sent match request or selected user sent match request to logged in user
         if selected_user_object.request.filter(request_sender=login_user_object.name,
                                                request_receiver=selected_user_object.name) \
                 or login_user_object.request.filter(request_sender=selected_user_object.name,
                                                     request_receiver=login_user_object.name):
-            # change match flag to tell template that user was sent request
-            already_match = 1
-            return render(request, 'tinder/profile.html',
-                          {'already_match': already_match, 'comments': selected_user_comments,
-                           'pic': selected_user_profile_picture,
-                           'additional_pic': selected_user_additional_pic,
-                           'name': UserInfo.objects.get(name=request.user.username),
-                           'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),
-                           'test': UserInfo.objects.get(name=request.user.username).match.all(), 'check': 1,
-                           'profile': UserInfo.objects.get(id=user_id), 'chat_room_name': chat_url})
+            return HttpResponseRedirect(reverse('tinder:profile', args=(user_id,)))
         # send match request to selected user
         else:
             user_name = RequestSender.objects.create(request_sender=login_user_object.name,
@@ -361,13 +337,7 @@ def match(request, user_id):
             # increase notification count on selected user
             UserInfo.objects.get(id=user_id).increase_noti_count()
             UserInfo.objects.get(id=user_id).save()
-            return render(request, 'tinder/profile.html',
-                          {'already_match': already_match, 'comments': selected_user_comments,
-                           'pic': selected_user_profile_picture,
-                           'name': UserInfo.objects.get(name=request.user.username),
-                           'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),
-                           'test': UserInfo.objects.get(name=request.user.username).match.all(), 'check': 1,
-                           'profile': UserInfo.objects.get(id=user_id), 'chat_room_name': chat_url})
+            return HttpResponseRedirect(reverse('tinder:profile', args=(user_id,)))
 
 
 # remove match between two user
@@ -377,20 +347,8 @@ def unmatch(request, user_id):
         return HttpResponseRedirect('/login')
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
-    # get selected user profile picture
-    selected_user_profile_pic = PictureContainer.objects.get(user=user_id, is_profile_pic=True)
-    selected_user_object = UserInfo.objects.get(id=user_id)
-    # get only active comment
-    selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
-    comments = selected_user_comment_object.comments.filter(active=True)
     # get selected user object
     selected_user_object = UserInfo.objects.get(id=user_id)
-    # get logged in user and selected user username
-    chat_room_username = [login_user_object.name, selected_user_object.name]
-    # sort two username by alphabet
-    chat_sort_username = sorted(chat_room_username)
-    # create string with sorted username format (user1_user2)
-    chat_url = chat_sort_username[0] + "_" + chat_sort_username[1]
     # if logged in user send unmatch form
     if request.POST.get('Unmatched'):
         # get linked object of logged in user and selected user
@@ -398,22 +356,12 @@ def unmatch(request, user_id):
                                                         request_receiver=selected_user_object.name)
         # remove linked object
         selected_user_object.request.remove(remove_match)
+        remove_match.delete()
         # decrease notification count on selected user
         UserInfo.objects.get(id=user_id).decrease_noti_count()
         UserInfo.objects.get(id=user_id).save()
-        return render(request, 'tinder/profile.html',
-                      {'comments': comments, 'pic': selected_user_profile_pic,
-                       'name': UserInfo.objects.get(name=request.user.username),
-                       'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),
-                       'test': UserInfo.objects.get(
-                           name=request.user.username).match.all(),
-                       'profile': UserInfo.objects.get(id=user_id), 'chat_room_name': chat_url})
-    return render(request, 'tinder/profile.html',
-                  {'comments': comments, 'pic': selected_user_profile_pic,
-                   'name': UserInfo.objects.get(name=request.user.username),
-                   'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),
-                   'test': UserInfo.objects.get(name=request.user.username).match.all(),
-                   'profile': UserInfo.objects.get(id=user_id), 'chat_room_name': chat_url})
+        return HttpResponseRedirect(reverse('tinder:profile', args=(user_id,)))
+    return HttpResponseRedirect(reverse('tinder:profile', args=(user_id,)))
 
 
 # accept request sent from another user
@@ -427,6 +375,8 @@ def accept_request(request, user_id):
     selected_user_profile_picture = PictureContainer.objects.get(user=user_id, is_profile_pic=True)
     # get selected user's object
     selected_user_object = UserInfo.objects.get(id=user_id)
+    # get selected user's additional picture
+    additional_pic = selected_user_object.image.filter(is_profile_pic=False)
     # get only active comment
     selected_user_comment_object = get_object_or_404(UserInfo, name=selected_user_object.name)
     comments = selected_user_comment_object.comments.filter(active=True)
@@ -448,12 +398,13 @@ def accept_request(request, user_id):
                                                     request_receiver=login_user_object.name)
         # remove that linked request object
         login_user_object.request.remove(request_obj)
+        request_obj.delete()
         # create linked match object to link between logged in user and select user
         match_obj_selected_user = MatchContainer.objects.create(partner_username=login_user_object.name,
                                                                 your_username=selected_user_object.name)
         # add linked match object to selected user
         selected_user_object.match.add(match_obj_selected_user)
-        return HttpResponseRedirect(reverse('tinder:match_request', args=(login_user_object.id,)))
+        return redirect(reverse('tinder:matched_profile', args=(user_id,)))
     # if logged in user decided to decline match request
     if request.POST.get('decline'):
         # get request linked object between selected user and logged in user
@@ -461,9 +412,10 @@ def accept_request(request, user_id):
                                                     request_receiver=login_user_object.name)
         # remove that linked request object
         login_user_object.request.remove(request_obj)
-        return HttpResponseRedirect(reverse('tinder:match_request', args=(login_user_object.id,)))
+        request_obj.delete()
+        return HttpResponseRedirect(reverse('tinder:home'))
     return render(request, 'tinder/accept_request.html',
-                  {'comments': comments, 'pic': selected_user_profile_picture,
+                  {'comments': comments, 'pic': selected_user_profile_picture, 'additional_pic': additional_pic,
                    'name': UserInfo.objects.get(name=request.user.username),
                    'chat_room_name': chat_url, 'profile': UserInfo.objects.get(id=user_id),
                    'subject': UserInfo.objects.get(id=user_id).expertise_subject.all(),
@@ -471,7 +423,7 @@ def accept_request(request, user_id):
 
 
 # show all student and tutor matched list on logged in user
-def students_list(request, user_id):
+def students_list(request):
     # if someone send request without login, redirect to login page
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login')
@@ -490,7 +442,8 @@ def students_list(request, user_id):
         value = list_sort[0] + "_" + list_sort[1]
         list_match[key] = value
     return render(request, 'tinder/students_list.html', {"name": UserInfo.objects.get(name=request.user.username),
-                                                         'tutor_list': UserInfo.objects.get(id=user_id).match.all(),
+                                                         'tutor_list': UserInfo.objects.get(name=request.user.username)
+                                                         .match.all(),
                                                          'list_match': list_match})
 
 
@@ -527,12 +480,14 @@ def matched_profile(request, user_id):
                                                              your_username=login_user_object.name)
         # remove linked object from logged in user
         login_user_object.match.remove(unmatch_obj_login_user)
+        unmatch_obj_login_user.delete()
         # get linked object between logged in user and select user
         unmatch_obj_selected_user = selected_user_object.match.get(partner_username=login_user_object.name,
                                                                    your_username=selected_user_object.name)
         # remove linked object from selected user
         selected_user_object.match.remove(unmatch_obj_selected_user)
-        return HttpResponseRedirect(reverse('tinder:students_list', args=(login_user_object.id,)))
+        unmatch_obj_selected_user.delete()
+        return HttpResponseRedirect(reverse('tinder:home'))
     return render(request, 'tinder/matched_profile.html',
                   {'pic': selected_user_profile_picture, 'additional_pic': additional_pic,
                    'name': UserInfo.objects.get(name=request.user.username),
