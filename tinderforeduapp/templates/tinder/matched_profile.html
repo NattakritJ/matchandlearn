@@ -82,8 +82,8 @@ bg{
 </head>
 <ul>
   <li><a href="/">Home</a></li>
-  <li><a name = "Students and Tutor list" href="{% url 'tinder:students_list' name.id%}">Students and Tutor list</a></li>
-    <li ><a name = "Match request" href="{% url 'tinder:match_request' name.id %}" {% if name.match_request > 0 %}class="notification"{% endif %}><span>Student request</span>{% if name.match_request > 0 %}<span name= "value_notificate" class="badge">{{ name.match_request }}</span>{% endif %}</a></li>
+  <li><a name = "Students and Tutor list" href="{% url 'tinder:students_list' %}">Students and Tutor list</a></li>
+    <li ><a name = "Match request" href="{% url 'tinder:match_request' %}" {% if name.match_request > 0 %}class="notification"{% endif %}><span>Student request</span>{% if name.match_request > 0 %}<span name= "value_notificate" class="badge">{{ name.match_request }}</span>{% endif %}</a></li>
     <li><a name = "About us" href="{% url 'tinder:aboutus' %}">About</a></li>
     <li><a name = "Chat" href="">Chat</a></li>
     <li><a name = "Privacy Policy" href="{% url 'tinder:privacy' %}">Privacy Policy</a></li>
@@ -131,11 +131,16 @@ bg{
             <div class="col-md-12">
                 <div>
                     <h2>{{ profile.firstname }}'s Gallery</h2>
+                    {% if additional_pic %}
+                    {% else %}
+                    <h3>{{ profile.firstname }} doesn't have image in gallery</h3>
+                    {% endif %}
                 </div>
             </div>
         </div>
         <!-- .row -->
         <div class="row">
+        {% if additional_pic %}
         {% for pic in additional_pic %}
             <div class="col-md-4">
                 <div class="thumbnail">
@@ -145,6 +150,7 @@ bg{
                 </div>
             </div>
             {% endfor %}
+        {% endif %}
         </div>
     </div>
 </section>
