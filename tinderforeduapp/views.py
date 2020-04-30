@@ -34,7 +34,7 @@ def signup(request):
             # create new user object and save it
             user = form.save(commit=False)
             # Not active this user
-            user.is_active = False
+            user.is_active = True
             user.save()
             user.refresh_from_db()
             # Save user's value into variable
