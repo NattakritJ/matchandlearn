@@ -1,134 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<title>Match and Learn</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<style>
-
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #333;
-}
-
-li {
-  float: left;
-}
-
-li a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 15px;
-  text-decoration: none;
-
-}
-
-li a:hover:not(.active) {
-  background-color: #111;
-}
-
-.active {
-  background-color: #4CAF50;
-}
-.notification {
-      background-color: #555;
-      color: white;
-      text-decoration: none;
-      padding: 15px 26px;
-      position: relative;
-      display: inline-block;
-      border-radius: 2px;
-    }
-
-    .notification:hover {
-      background: red;
-    }
-
-    .notification .badge {
-      position: absolute;
-      top: 12px;
-      right: 1px;
-      padding: 3px 5px;
-      border-radius: 40%;
-      background: red;
-      color: white;
-    }
-.button {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-}
-
-.button2 {background-color: #008CBA;} /* Blue */
-.button3 {background-color: #f44336;} /* Red */
-.button4 {background-color: #e7e7e7; color: black;} /* Gray */
-.myDiv {
-    width: auto;
-    height: auto;
-    border: 5px solid rgb(57, 219, 222);
-    transition: all 1s;
-    background-color: rgb(202, 241, 196);
-}
-.subDiv {
-
-    text-align: left;
-    cursor: pointer;
-}
-.myDiv:hover .subDiv {
-    color: #82e185;
-    transition: all 1s;
-}
-.myDiv:hover {
-    border: 10px solid rgb(195, 241, 255);
-}
-
-bg{
-    background-position:center;
-}
-    h1 { color: #009ef8; font-family: 'Raleway',sans-serif; font-size: 30px; font-weight: 500;  margin: 0 0 24px; }
-    p { color: #009ef8; font-family: 'Raleway',sans-serif; font-size: 18px; font-weight: 500;  margin: 0 0 24px; }
-
-</style>
-
-<ul>
-  <li><a href="/">Home</a></li>
-  <li><a name = "Students and Tutor list" href="{% url 'tinder:students_list' %}">Students and Tutor list</a></li>
-    <li ><a name = "Match request" href="{% url 'tinder:match_request' %}" {% if name.match_request > 0 %}class="notification"{% endif %}><span>Student request</span>{% if name.match_request > 0 %}<span name= "value_notificate" class="badge">{{ name.match_request }}</span>{% endif %}</a></li>
-    <li><a name = "About us" href="{% url 'tinder:aboutus' %}">About</a></li>
-
-    <li><a name = "Privacy Policy" href="{% url 'tinder:privacy' %}">Privacy Policy</a></li>
-    <li style="float:right"><a id="logout_btn" href="{% url 'tinder:logout' %}">Logout</a></li>
-    <li style="float:right"><a href="{% url 'tinder:faq' %}">Help</a></li>
-    <li style="float:right"><a href="/my_profile">Profile : {{ user.first_name }}</a></li>
-</ul>
-
+{% include "tinder/child_template/list_page_style.html" %}
 <body>
-
-     {% for key,value in list_match.items %}
-
-            <form method="post" action="{% url 'chat:room' value %}" target="_blank">
-                <div class ="myDiv">
+    {% for key,value in list_match.items %}
+        <form method="post" action="{% url 'chat:room' value %}" target="_blank">
+            <div class ="myDiv">
                 <div class="subDiv" id="user_{{ key.name }}" onclick="location.href='{% url 'tinder:matched_profile' key.id %}'"><h1> {{ key.firstname }} {{ key.lastname }}</h1><p> Gender: {{ key.gender }} <p/><p> Age: {{ key.age }} <p/></div>
-
-    {% csrf_token %}
+                {% csrf_token %}
                 <div class="w3-display-container w3-white" >
-                <div class="w3-display-bottomright"><button class="button button4" name="room" value="room" >chat room</button></div></div>
-                    </div>
-            </form>
+                    <div class="w3-display-bottomright"><button class="button button4" name="room" value="room" >chat room</button></div></div>
+            </div>
+        </form>
     {% endfor %}
-
-
 </body>
-
 </html>

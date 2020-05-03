@@ -371,10 +371,10 @@ def accept_request(request, user_id):
         return HttpResponseRedirect('/login')
     # get logged in user object
     login_user_object = UserInfo.objects.get(name=request.user.username)
-    # get selected user's profile picture
-    selected_user_profile_picture = PictureContainer.objects.get(user=user_id, is_profile_pic=True)
     # get selected user's object
     selected_user_object = UserInfo.objects.get(id=user_id)
+    # get selected user's profile picture
+    selected_user_profile_picture = selected_user_object.image.filter(is_profile_pic=True)
     # get selected user's additional picture
     additional_pic = selected_user_object.image.filter(is_profile_pic=False)
     # get only active comment
