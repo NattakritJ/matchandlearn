@@ -1,0 +1,30 @@
+{% load static %}
+<section class="expertise-wrapper section-wrapper gray-bg">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div>
+                    <h2>{{ profile.firstname }}'s Gallery</h2>
+                    {% if additional_pic %}
+                    {% else %}
+                    <h3 id="{{ profile.firstname }}_no_image">{{ profile.firstname }} doesn't have image in gallery</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- .row -->
+        <div class="row">
+        {% if additional_pic %}
+        {% for pic in additional_pic %}
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <a href="{{ pic.images.url }}" target="_blank">
+                        <img id="pic_{{ forloop.counter }}" src="{{ pic.images.url }}" style="width:100%">
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        </div>
+    </div>
+</section>

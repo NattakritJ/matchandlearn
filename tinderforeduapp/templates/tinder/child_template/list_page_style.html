@@ -1,0 +1,81 @@
+<title>Match and Learn</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 15px;
+  text-decoration: none;
+
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #4CAF50;
+}
+.notification {
+      background-color: #555;
+      color: white;
+      text-decoration: none;
+      padding: 15px 26px;
+      position: relative;
+      display: inline-block;
+      border-radius: 2px;
+    }
+
+    .notification:hover {
+      background: red;
+    }
+
+    .notification .badge {
+      position: absolute;
+      top: 12px;
+      right: 1px;
+      padding: 3px 5px;
+      border-radius: 40%;
+      background: red;
+      color: white;
+    }
+bg{
+    background-position:center;
+}
+    .myDiv {
+    width: auto;
+    height: auto;
+    border: 5px solid rgb(57, 219, 222);
+    transition: all 1s;
+    background-color: rgb(202, 241, 196);
+}
+.subDiv {
+
+    text-align: left;
+    cursor: pointer;
+}
+.myDiv:hover .subDiv {
+    color: #82e185;
+    transition: all 1s;
+}
+.myDiv:hover {
+    border: 10px solid rgb(195, 241, 255);
+}
+
+</style>
+
+{% include "tinder/child_template/navbar.html" %}
