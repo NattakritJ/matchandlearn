@@ -6,6 +6,6 @@ language: python
 python:
   - "3.8"
 script:
-  - "python manage.py functional_tests tests"
+  - "python manage.py tests functional_tests"
 services:
   - sqlite3
