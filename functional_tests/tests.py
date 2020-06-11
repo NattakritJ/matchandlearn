@@ -8,7 +8,7 @@ import unittest
 class FunctionalTest(LiveServerTestCase):
 
     def setUp(self):
-        self.browser = webdriver.Edge('msedgedriver.exe')
+        self.browser = webdriver.Chrome()
 
     def tearDown(self):
         self.browser.quit()
