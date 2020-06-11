@@ -1,15 +1,12 @@
 ---
 sudo: required
 before_script:
-- wget -N https://chromedriver.storage.googleapis.com/80.0.3987.106/chromedriver_linux64.zip -P ~/
-- unzip ~/chromedriver_linux64.zip -d ~/
-- rm ~/chromedriver_linux64.zip
-- wget -N https://chromedriver.storage.googleapis.com/80.0.3987.106/chromedriver_linux64.zip -P ~/
-- unzip ~/chromedriver_linux64.zip -d ~/
-- rm ~/chromedriver_linux64.zip
-- sudo mv -f ~/chromedriver /usr/local/share/
-- sudo chmod +x /usr/local/share/chromedriver
-- sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+ - wget -N https://chromedriver.storage.googleapis.com/83.0.4103.97/chromedriver_linux64.zip -P ~/
+  - unzip ~/chromedriver_linux64.zip -d ~/
+  - rm ~/chromedriver_linux64.zip
+  - sudo mv -f ~/chromedriver /usr/local/share/
+  - sudo chmod +x /usr/local/share/chromedriver
+  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
 env: "-DJANGO=3.0.3 DB=sqlite3"
 install:
   - "pip install -r requirements.txt"
