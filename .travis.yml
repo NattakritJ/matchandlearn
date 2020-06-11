@@ -8,4 +8,4 @@ python:
 script:
   - "python manage.py functional_tests tests"
 services:
-  - sqlite
+  - sqlite3
