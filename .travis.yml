@@ -1,7 +1,8 @@
 ---
+sudo: required
 before_script:
   - "wget http://chromedriver.storage.googleapis.com/2.24/chromedriver_linux64.zip"
-  - "unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python2.7.12/bin/"
+  - "unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python3.8/bin/"
   - "export CHROME_BIN=chromium-browser"
 env: "-DJANGO=3.0.3 DB=sqlite3"
 install:
