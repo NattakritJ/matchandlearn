@@ -382,7 +382,7 @@ class FunctionalTest(LiveServerTestCase):
         #self.add_expertise_subject('kitsanapong', 'Kitsanapong Rodjing', 'Math', 'subject_Math', '1: Math')
         # Nattakrit add expertise subject
         #self.add_expertise_subject('nattakrit', 'Nattakrit Jatupattaradit', 'Software Development 2',
-                                   'subject_Software Development 2', '1: Software Development 2')
+        #                           'subject_Software Development 2', '1: Software Development 2')
         # Kitsanapong delete expertise subject and add new subject
         #self.delete_expertise_subject_and_add_new_one()
         # Kitsanapong add image
