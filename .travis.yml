@@ -1,20 +1,22 @@
----
-addons:
-  chrome: stable
-  firefox: latest
-before_script:
-  - "wget -N https://chromedriver.storage.googleapis.com/83.0.4103.39/chromedriver_linux64.zip -P ~/"
-  - "unzip ~/chromedriver_linux64.zip -d ~/"
-  - "rm ~/chromedriver_linux64.zip"
-  - "sudo mv -f ~/chromedriver /usr/local/share/"
-  - "sudo chmod +x /usr/local/share/chromedriver"
-  - "sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver"
-env: "-DJANGO=3.0.3 DB=sqlite3"
-install:
-  - "pip install -r requirements.txt"
 language: python
 python:
-  - "3.8"
+ - "3.8"
+cache: pip
+env:
+ - MOZ_HEADLESS=1
+addons:
+ firefox: latest
+before_install:
+ - wget https://github.com/mozilla/geckodriver/releases/download/v0.18.0/geckodriver-v0.18.0-linux64.tar.gz
+ - mkdir geckodriver
+ - tar -xzf geckodriver-v0.18.0-linux64.tar.gz -C geckodriver
+ - export PATH=$PATH:$PWD/geckodriver
+ - geckodriver --version
+ - export MOZ_HEADLESS=1
+install:
+ - pip install -r requirements.txt
 script:
-  - "python manage.py test functional_tests"
-sudo: required
+ - python manage.py makemigrations
+ - python manage.py migrate
+ - python manage.py test functional_tests
+sudo: false
