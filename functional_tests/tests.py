@@ -3,12 +3,18 @@ from selenium import webdriver
 from django.test import LiveServerTestCase
 import time
 import unittest
+from selenium.webdriver.firefox.options import Options
 
 
 class FunctionalTest(LiveServerTestCase):
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        options = Options()
+        options.add_argument('-headless')
+
+        self.browser = webdriver.Firefox(firefox_options=options)
+        self.browser.implicitly_wait(5)
+        self.browser.maximize_window()
 
     def tearDown(self):
         self.browser.quit()
