@@ -1,0 +1,11 @@
+language: python
+    python:
+      - "3.8"
+    services:
+      - sqlite
+    env:
+      -DJANGO=3.0.3 DB=sqlite3
+    install:
+      - pip install -r requirements.txt
+    script:
+      - python manage.py functional_tests tests
