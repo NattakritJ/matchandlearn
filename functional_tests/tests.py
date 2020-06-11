@@ -8,7 +8,7 @@ import unittest
 class FunctionalTest(LiveServerTestCase):
 
     def setUp(self):
-        self.browser = webdriver.Chrome()
+        self.browser = webdriver.Firefox()
 
     def tearDown(self):
         self.browser.quit()
