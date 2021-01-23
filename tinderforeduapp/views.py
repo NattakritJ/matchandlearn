@@ -56,7 +56,7 @@ def signup(request):
             create_user.save()
             user.save()
             # send verification email to user's email
-            site_url = get_current_site(request)
+            '''site_url = get_current_site(request)
             mail_subject = 'Please verify your email address.'
             message = render_to_string('tinder/send_email_template.html', {
                 'user': user,
@@ -66,7 +66,8 @@ def signup(request):
             send_to = form.cleaned_data.get('email')
             email = EmailMessage(mail_subject, message, to=[send_to])
             email.send()
-            return render(request, 'tinder/email_sent.html')
+            return render(request, 'tinder/email_sent.html')'''
+            return HttpResponseRedirect('/login')
     # didn't receive POST
     else:
         form = SignUpForm()
